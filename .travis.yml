@@ -15,6 +15,16 @@ install: true
 script:
  - ./gradlew prepareForCiBuild -s -i -Prelease.disableChecks && ./gradlew ciBuild -s -i -Prelease.disableChecks
 
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -fr $HOME/.gradle/caches/*/scripts/
+  - rm -fr $HOME/.gradle/caches/*/scripts-remapped/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
 env:
   global:
   - secure: UUG2uPPiHr+waWsOkgIsqq9OT41oIcNzB5EPIc0TTkneL3dtduYSasJw2vKt5q5xgkz0QmOxXYZC7uf24BYuRTDuqVyTJFCgnt+IluMIzIymhUaXf95DEn6F6F9/zFXYtIiiAgqy+bQR5qsBmxJJWiM2gMARS49cxSy+xkBN98FGPXPDE+baCkJVfmVk54iVq9vSk67mCOliO15j5qSdajAERraFkGN8O87KEA4StqdfVrJf5GPXn1hrctPwVMvmc2zi1MBEvqoLJk0+KCKad1WJ6/CZ5uLKiUNx4U2m3SRci+z778bReyyjr/30K2e8FOJKcQEG1dar2J387IKTF+R54q636+Zlj0zTOSNVJO223Gv1fQpOyTHbGWF5+nwb0wyzgWv9N/ykWxdN9XYT29HvxsTa6Lb2tZd0ODRAnm2Py20Emx65meEvRrOKbDvpimGUVA43zL+kxuV9rhyMp6gcALbOUPGtruj8i1G2+NC52Y1zrHkQdTYchgxenURa1C6LQvqjA4SD0imVdq3sVp49+AAtnoJzoUFdwsuUXO54zaOFWzETKxskb9dxMLlUXZeUsA/FRSpA5lkqoPrfowXPXE2S/2/KAsgaXzjB9NQmggG/sBpMT6WBqfsUolVqdY5Y+L6XCYqIFansRKk6c2d0yE51IOgvIPNIfofQkaU=
