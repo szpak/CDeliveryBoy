@@ -11,8 +11,9 @@ before_install:
  - git config user.email "szpak-ci@users.noreply.github.com"
  - git config user.name "Szpak CI Bot"
 
-install: ./gradlew assemble --stacktrace --info
-script: ./gradlew check --stacktrace --info --continue
+install: true
+script:
+ - ./gradlew prepareForCiBuild -s -i -Prelease.disableChecks && ./gradlew ciBuild -s -i -Prelease.disableChecks
 
 env:
   global:
