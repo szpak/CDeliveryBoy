@@ -1,4 +1,4 @@
-# CDelivery Boy [![Build Status](https://travis-ci.org/szpak/gradle-template.svg?branch=master)](https://travis-ci.org/szpak/gradle-template) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/info.solidsoft.gradle/gradle-template/badge.svg)](https://maven-badges.herokuapp.com/maven-central/info.solidsoft.gradle/gradle-template)
+# CDeliveryBoy [![Build Status](https://travis-ci.org/szpak/CDeliveryBoy.svg?branch=master)](https://travis-ci.org/szpak/CDeliveryBoy) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/info.solidsoft.gradle/cdeliveryboy/badge.svg)](https://maven-badges.herokuapp.com/maven-central/info.solidsoft.gradle/cdeliveryboy)
 
 Continuous Delivery solution for Gradle based FOSS projects.
 
