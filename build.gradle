@@ -13,7 +13,7 @@ apply plugin: 'groovy'
 apply plugin: 'info.solidsoft.cdeliveryboy'
 
 cDeliveryBoy {
-    releaseBranch = "selfReleased"
+    releaseBranch = "feature/selfReleased"
     autoPromote = false
 }
 
