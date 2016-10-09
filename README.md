@@ -4,8 +4,8 @@ Continuous Delivery solution for Gradle based FOSS projects.
 
 ## Quick start
 
-To be precisely defined. In the meantime please take a look at the [Dummy CD project](https://github.com/szpak/dummy-cd-project/tree/cdeliveryBoy)
-(a cDeliveryBoy branch) with sample (working) configuration.
+To be precisely defined. In the meantime please take a look at the [Dummy CD project](https://github.com/szpak/dummy-cd-project/tree/cDeliveryBoy)
+(a cDeliveryBoy branch) with sample (working) configuration or CDeliveryBoy project itself.
  
 ## Features
 
