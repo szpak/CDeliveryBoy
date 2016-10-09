@@ -1,0 +1,122 @@
+Main areas of development (and testing):
+ - tasks orchestration ("unit" tests)
+ - CI agnostic build condition evaluation (pure unit tests)
+   - CI specific build condition evaluation (if available)
+ - CI specific Git operations (functional tests with "fake" projects on GitHub?)
+ - plugin configuration ("unit" tests)
+ - general repression/compatibility with different Gradle versions - simple functional tests - with Travis like fake environment and different branches for local/travis tests?
+
+Milestone 1:
+ - ability to release fake project in very basic scenario from Travis
+   ✔ upload snapshot to Nexus
+   ✔ Git push with tags - solved issues with Error 128 - variable name...
+   ✔ sign files with GPG
+   - close Nexus repository successfully - waiting for not disposable subkey to be published
+
+Milestone 2:
+ ✔ resolve issue with dryRun in ciBuild
+ ✔ create pushRelease2 task internally
+ ✔ apply plugins internally
+   ✔ it should be possible to disable - via project property - it's too early to read configuration
+
+Milestone X:
+ - release mockito-java8 with CDeliveryBoy
+ - code cleanup
+ - finalize name and publish to GitHub
+ - initial documentation
+
+Milestone X+1:
+ ✔ configurable task names
+   - an ordered list of tasks - maybe a structure for a task to have its name, type/purpose?
+   - support for disabled steps (with null value set)
+ - quick start template - lazybones - https://github.com/pledbrook/lazybones?
+ - up-to-date status - should be always not up-to-date?  If not, what parameters should be set as @Input (there are internally not used by tasks)?
+ - provide requested version number in a commit message
+ - eat your own dog food
+ - support for SKIP_RELEASE for builds with different Java versions
+
+Milestone X+2:
+ - verify that Nexus repository has been really closed - https://github.com/Codearte/gradle-nexus-staging-plugin/issues/21
+ - Rollback when possible?
+   - e.g. dropRepository after pushRelease failed to not keep closed staging repository in Nexus
+
+
+Other:
+ - ability to disable publishing snapshots (in a configuration)
+ - "Please specify username:" on Travis - gradle-nexus-plugin - add to README, it would be good to have a switch in nexus plugin to skip console
+   and fail with error - or Gradle/plugin could known - there is no interactive console in Travis
+ ✔ why secure variables are not encrypted? - DONE - fixed locally and reported https://github.com/travis-ci/travis.rb/issues/436
+ - Axion
+   - Attach remote in Travis + disable more checks
+     - contrib to Axion Wiki
+     - support for setting refSpec in Axion
+       - add 'refsOrSpecs: HEAD:refs/heads/master' in https://github.com/allegro/axion-release-plugin/blob/1de6a06b4c1ff88291e039223820cc5a7c80b096/src/main/groovy/pl/allegro/tech/build/axion/release/infrastructure/git/GitRepository.groovy#L101-L103
+         - also in a low level variant - http://stackoverflow.com/a/13451225/313516
+   - fix - 3 commits in Axion - https://github.com/allegro/axion-release-plugin/issues/132
+   - "git push --tags" is not atomic - fails with 1 when tag already exists, but leaves commit pushed - with Git 2.4+ it should be better, but it not :(
+   ✔ "git -q push ... > /dev/null 2>&1" hides error messages - try to use "... 2>&1 | sed "s/$GH_TOKEN/xxx/g" to just remove a token - or output could be redirected (see Exec class) - DONE
+   - version is cached - project version assignment cannot be done in plugin - a separate flag for Axion to disable caching?
+   - disable checks in preconfigured configuration
+   - switch to annotated tags?
+ - set username & email in plugin (via "git config" or only in Axion?)
+ - GPG
+   - keep encrypted gpg keyring instead of importing decrypted key?
+   - set signing properties in plugin
+   - subkey with detached master
+   - extract the only secret key for signing uid in bash to not have to provide it manually
+ - nexus upload/staging
+   - verify that Nexus repository has been really closed - https://github.com/Codearte/gradle-nexus-staging-plugin/issues/21
+   - always create new staging repository - instead of adding artifacts to already existing - rather issue with uploadArchives
+   - generic nexus-plugin is not crucial - could be replaced with new maven-publish plugin - consider ability to disable its preconfiguration
+
+ - How to get know from a task if release has or hasn't been done? - ???
+ - How to test it in a Travis-like environment?
+
+ ✔ How to switch between real and fake release tasks (configuration in extension? dryRun mode?) - DONE - dryRun
+ ✔ Who should apply other plugins? The plugin or people? Would it be possible to override plugin configuration by people in the first case?
+ ✔ Should artifact upload be triggered automatically for everything in a release branch (also without a trigger command)? - rather only for snapshots
+ ✘ Manual mode to release locally? - rather not needed - component tasks can be called separately, preconfiguration works unless explicitely disabled
+ - Acceptance/functional tests with real project (drop instead of promote) on the plugin build on Travis
+ ✔ Make (some) parameters set from a command line (like -PcDeliveryBoy.dryRun=true) - DONE - for selected parameters
+   - Generalize mechanism - e.g. all fields in configuration with simple types via Groovy reflection
+ - Animal Sniffer task to verify compatibility with Java 7
+ - Sensible defaults pointing to project name - as a plug - git user/email, commit message, etc.
+
+One day, maybe:
+ - More elastic list of steps (like notification to Slack about the beginning of the release process - to discourage people from pushing to master)
+ - Steps that can fail (e.g. notification to Slack)?
+ - Publication comparison (like in Mockito)?
+
+Implementation details:
+ - too much "new" operator in code - some context to simulate dependencies injection?
+ - shouldn't DefaultTaskConfig be an interface in CDeliveryBoyPluginConfig? Or maybe DryRunTaskConfig is not needed?
+
+
+New configuration layout scratch:
+
+cDeliveryBoy {
+    ciType = "travis"
+
+    git {
+        releaseBranch = "deliveryBoy"
+        user = "Heniek CI"
+        email = "heniek-ci@example.com"
+    }
+
+    trigger {
+        releaseOnDemand = true
+        onDemandReleaseTriggerCommand = "GOGOGO!"
+    }
+
+    nexus {
+        autoPromote = true
+        packageGroup = "info.solidsoft" //Useful for preconfiguration?
+    }
+
+    tasks {
+        buildProjectTasks = ["artificialBuild"]
+    }
+
+    dryRun = true
+    dryRunForceNonSnapshotVersion = false
+}

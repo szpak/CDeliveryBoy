@@ -1,0 +1,96 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3'
+        classpath 'pl.allegro.tech.build:axion-release-plugin:1.3.3'
+        classpath 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
+    }
+}
+
+apply plugin: 'groovy'
+apply plugin: 'pl.allegro.tech.build.axion-release'
+apply plugin: 'com.bmuschko.nexus'
+apply plugin: 'io.codearte.nexus-staging'
+
+scmVersion {
+    tag {
+        prefix = 'release'
+        versionSeparator = '/'
+    }
+    createReleaseCommit = true
+    releaseCommitMessage { version, position -> "Release version: ${version}\n\n[ci skip]" }
+    hooks {
+        pre 'fileUpdate', [file: 'README.md', pattern: {v, p -> /"info\.solidsoft\.gradle:cdeliveryboy:.*"/},
+                           replacement: {v, p -> "\"info.solidsoft.gradle:cdeliveryboy:$v\""}]
+    }
+}
+
+project.group = "info.solidsoft.gradle"
+project.version = scmVersion.version
+
+sourceCompatibility = 1.7
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+
+    compile 'com.bmuschko:gradle-nexus-plugin:2.3'
+    compile 'pl.allegro.tech.build:axion-release-plugin:1.2.3'
+    compile 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
+    
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-2') {
+        //groovy 2.4.x is already provided by Gradle itself
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
+    testCompile 'cglib:cglib-nodep:3.2.0' //for mocking in Spock
+    testCompile 'org.objenesis:objenesis:2.4'   //for mocking in Spock
+    testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.1'
+}
+
+nexusStaging {
+    packageGroup = "info.solidsoft"
+}
+
+def repoSlug = 'szpak/cdeliveryboy'
+modifyPom {
+    project {
+        name 'cdeliveryboy'
+        description 'CDeliveryBoy - CD for FOSS projects'
+        url "https://github.com/$repoSlug"
+        inceptionYear '2016'
+
+        scm {
+            url "https://github.com/$repoSlug"
+            connection "scm:https://github.com/$repoSlug"
+            developerConnection "scm:git://github.com/$repoSlug"
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'szpak'
+                name 'Marcin Zajączkowski'
+                email 'mszpak ATT wp DOTT pl'
+                roles {
+                    role 'developer'
+                    role 'despot'
+                }
+            }
+        }
+    }
+}
+
+uploadArchives.dependsOn { check }
