@@ -1,11 +1,9 @@
 buildscript {
     repositories {
-        mavenLocal()
         mavenCentral()
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     dependencies {
-        classpath 'info.solidsoft.gradle:cdeliveryboy:0.2.0-SNAPSHOT'
+        classpath 'info.solidsoft.gradle:cdeliveryboy:0.3.0'
     }
 }
 
