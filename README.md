@@ -60,6 +60,9 @@ I've been tired of manual releasing the FOSS projects I maintain. Being professi
 
 ## Additional information 
 
+**The project is available as a technology preview and it definitely will be evolving in the way that breaks backward compatibility.
+Please take it into account before using it in production.**
+
 CDeliveryBoy has been written by Marcin Zajączkowski. The author can be contacted directly via email: mszpak ATT wp DOTT pl.
 There is also Marcin's blog available: [Solid Soft](http://blog.solidsoft.info/) - working code is not enough.
 
