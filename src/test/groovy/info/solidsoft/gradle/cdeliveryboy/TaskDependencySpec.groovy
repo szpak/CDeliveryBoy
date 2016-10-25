@@ -4,35 +4,22 @@ import groovy.transform.NotYetImplemented
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.DryRunTaskConfig
-import org.gradle.api.Project
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.Task
-import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.tooling.BuildException
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
-import spock.lang.Specification
 import spock.util.Exceptions
 
 @SuppressWarnings("GrMethodMayBeStatic")
-class TaskDependencySpec extends Specification implements TaskTestTrait, TaskFixtureTrait, ProjectAware {
+class TaskDependencySpec extends BasicProjectBuilderSpec implements TaskTestTrait {
 
-    @Rule
-    public TemporaryFolder tmpProjectDir = new TemporaryFolder()
-
-    Project project //visibility for TaskTestTrait and ProjectAware
     private CDeliveryBoyPluginConfig deliveryBoyConfig
     private BuildConditionEvaluator buildConditionEvaluatorStub
 
-    //TODO: There is a regression in 2.14.1 with API jar regeneration for every test - https://discuss.gradle.org/t/performance-regression-in-projectbuilder-in-2-14-and-3-0/18956
-    //https://github.com/gradle/gradle/commit/3216f07b3acb4cbbb8241d8a1d50b8db9940f37e
     def setup() {
-        project = ProjectBuilder.builder().withProjectDir(tmpProjectDir.root).build()
-        project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
-
-        project.extensions.extraProperties.set("cDeliveryBoy.disablePluginsAutoConfig", "true") //speed up testing, extra plugin are not needed here
-//        project.apply(plugin: "java") //one second delay - do not apply if not needed in given specification
+        project.extensions.extraProperties.set("cDeliveryBoy.disablePluginsAutoConfig", "true") //speed up testing, extra plugins are not needed here
         project.apply(plugin: CDeliveryBoyPlugin)
+
+        project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
 
         deliveryBoyConfig = getDeliveryBoyConfig()
         deliveryBoyConfig.dryRun = true
