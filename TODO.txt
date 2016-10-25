@@ -34,6 +34,7 @@ Milestone X+1:
  - provide requested version number in a commit message
  - eat your own dog food
  - support for SKIP_RELEASE for builds with different Java versions
+ ✔ "Powered by CDeliveryBoy" banner by default in commit message
 
 Milestone X+2:
  - verify that Nexus repository has been really closed - https://github.com/Codearte/gradle-nexus-staging-plugin/issues/21
@@ -101,6 +102,7 @@ cDeliveryBoy {
         releaseBranch = "deliveryBoy"
         user = "Heniek CI"
         email = "heniek-ci@example.com"
+        disablePoweredByMessage = false
     }
 
     trigger {

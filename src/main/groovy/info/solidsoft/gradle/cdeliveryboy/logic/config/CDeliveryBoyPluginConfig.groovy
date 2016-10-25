@@ -15,7 +15,12 @@ class CDeliveryBoyPluginConfig {
     //For dryRun/test purpose
     boolean dryRunForceNonSnapshotVersion = false
 
+    GitConfig git = new GitConfig()
     DefaultTaskConfig tasks = new DefaultTaskConfig()
+
+    void git(@DelegatesTo(GitConfig) Closure closure) {
+        git.with closure
+    }
 
     void tasks(@DelegatesTo(DefaultTaskConfig) Closure closure) {
         tasks.with closure
