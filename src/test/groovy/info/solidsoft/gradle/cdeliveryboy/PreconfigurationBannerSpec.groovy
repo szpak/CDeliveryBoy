@@ -15,17 +15,20 @@ class PreconfigurationBannerSpec extends Specification implements ProjectAware, 
 
     Project project
 
+    private String version
+    private ScmPosition position
+    private VersionConfig scmVersion
+
     def setup() {
         project = ProjectBuilder.builder().withProjectDir(tmpProjectDir.root).build()
         project.apply(plugin: CDeliveryBoyPlugin)
+
+        version = "7.1"
+        position = Stub()
+        scmVersion = getAxionConfiguration()
     }
 
     def "should add powered by banner in default configuration"() {
-        given:
-            VersionConfig scmVersion = getAxionConfiguration()
-        and:
-            String version = "7.1"
-            ScmPosition position = Stub()
         when:
             triggerEvaluate()
         then:
@@ -35,11 +38,6 @@ class PreconfigurationBannerSpec extends Specification implements ProjectAware, 
 
     def "should not add powered by banner in explicitly disabled in configuration"() {
         given:
-            VersionConfig scmVersion = getAxionConfiguration()
-        and:
-            String version = "7.1"
-            ScmPosition position = Stub()
-        and:
             getDeliveryBoyConfig().git.disablePoweredByMessage = true
         when:
             triggerEvaluate()
