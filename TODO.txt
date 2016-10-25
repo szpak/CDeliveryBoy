@@ -20,10 +20,10 @@ Milestone 2:
    ✔ it should be possible to disable - via project property - it's too early to read configuration
 
 Milestone X:
- - release mockito-java8 with CDeliveryBoy
+ ✔ release mockito-java8 with CDeliveryBoy
  - code cleanup
- - finalize name and publish to GitHub
- - initial documentation
+ ✔ finalize name and publish to GitHub
+ ~ initial documentation
 
 Milestone X+1:
  ✔ configurable task names
@@ -31,8 +31,8 @@ Milestone X+1:
    - support for disabled steps (with null value set)
  - quick start template - lazybones - https://github.com/pledbrook/lazybones?
  - up-to-date status - should be always not up-to-date?  If not, what parameters should be set as @Input (there are internally not used by tasks)?
- - provide requested version number in a commit message
- - eat your own dog food
+ - provide requested version number in a commit message - workaround with artificial alpha tags exists
+ ✔ eat your own dog food
  - support for SKIP_RELEASE for builds with different Java versions
  ✔ "Powered by CDeliveryBoy" banner by default in commit message
 
