@@ -1,9 +1,11 @@
 package info.solidsoft.gradle.cdeliveryboy
 
+import groovy.transform.CompileStatic
+import groovy.transform.SelfType
 import info.solidsoft.gradle.cdeliveryboy.logic.config.TaskConfig
 
-//@SelfType(ProjectAware)   //TODO: Temporary disabled due to: https://youtrack.jetbrains.com/issue/IDEA-161993
-//@CompileStatic
+@SelfType(ProjectAware)
+@CompileStatic
 trait TaskTestTrait {
 
     void createAllDependantTasks(TaskConfig taskConfig) {

@@ -15,15 +15,13 @@ import spock.lang.Specification
 import spock.util.Exceptions
 
 @SuppressWarnings("GrMethodMayBeStatic")
-class TaskDependencySpec extends Specification implements TaskTestTrait, ProjectAware {
+class TaskDependencySpec extends Specification implements TaskTestTrait, TaskFixtureTrait, ProjectAware {
 
     @Rule
     public TemporaryFolder tmpProjectDir = new TemporaryFolder()
 
-    //visibility for TaskTestTrait and ProjectAware
-    Project project
+    Project project //visibility for TaskTestTrait and ProjectAware
     private CDeliveryBoyPluginConfig deliveryBoyConfig
-
     private BuildConditionEvaluator buildConditionEvaluatorStub
 
     //TODO: There is a regression in 2.14.1 with API jar regeneration for every test - https://discuss.gradle.org/t/performance-regression-in-projectbuilder-in-2-14-and-3-0/18956
@@ -31,22 +29,19 @@ class TaskDependencySpec extends Specification implements TaskTestTrait, Project
     def setup() {
         project = ProjectBuilder.builder().withProjectDir(tmpProjectDir.root).build()
         project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
-        project.extensions.extraProperties.set("cDeliveryBoy.disablePluginsAutoConfig", "true") //External plugins cannot be used in ProjectBuilder
 
+        project.extensions.extraProperties.set("cDeliveryBoy.disablePluginsAutoConfig", "true") //speed up testing, extra plugin are not needed here
 //        project.apply(plugin: "java") //one second delay - do not apply if not needed in given specification
         project.apply(plugin: CDeliveryBoyPlugin)
 
-        deliveryBoyConfig = getDeliveryBoyConfig(project)
+        deliveryBoyConfig = getDeliveryBoyConfig()
         deliveryBoyConfig.dryRun = true
 
         createAllDependantTasks(new DryRunTaskConfig())
 
         buildConditionEvaluatorStub = Stub()
         project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
-
     }
-
-    //TODO: Just to verify task dependencies work in ProjectBuilder - think if those kind of tests should be used to verify "the inter task logic"
 
     def "should not prepare release if any of isInReleaseBranch (#isInReleaseBranch) or isReleaseTriggered (#isReleaseTriggered) is not fulfilled "() {
         given:
@@ -168,20 +163,6 @@ class TaskDependencySpec extends Specification implements TaskTestTrait, Project
 
     @NotYetImplemented  //Can be tested with ProjectBuilder?
     def "should apply preconfiguration on Axion plugin"() {
-    }
-
-    private CDeliveryBoyPluginConfig getDeliveryBoyConfig(Project project) {
-        project.getExtensions().getByType(CDeliveryBoyPluginConfig)
-    }
-
-    private Task getJustOneTaskByNameOrFail(String taskName) {
-        Set<Task> tasks = project.getTasksByName(taskName, false) //forces "afterEvaluate"
-        assert tasks?.size() == 1 : "Expected tasks: '$taskName', All tasks: ${project.tasks}"
-        return tasks[0]
-    }
-
-    private void triggerEvaluate() {
-        getJustOneTaskByNameOrFail('tasks')
     }
 
     private void assertGivenTaskMustRunAfterAnother(String taskName, String predecessorName) {
