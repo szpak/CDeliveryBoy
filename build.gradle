@@ -14,6 +14,10 @@ cDeliveryBoy {
     autoPromote = false
 }
 
+nexusStaging {
+    packageGroup = "info.solidsoft"
+}
+
 scmVersion {
     hooks {
         pre 'fileUpdate', [file: 'README.md', pattern: {v, p -> /"info\.solidsoft\.gradle:cdeliveryboy:.*"/},
@@ -45,10 +49,6 @@ dependencies {
     testCompile 'cglib:cglib-nodep:3.2.0' //for mocking in Spock
     testCompile 'org.objenesis:objenesis:2.4'   //for mocking in Spock
     testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.1'
-}
-
-nexusStaging {
-    packageGroup = "info.solidsoft"
 }
 
 def repoSlug = 'szpak/cdeliveryboy'
