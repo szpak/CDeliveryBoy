@@ -109,7 +109,7 @@ class TaskDependencySpec extends BasicProjectBuilderSpec implements TaskTestTrai
             buildConditionEvaluatorStub.isSnapshotVersion() >> false
             project.gradle.startParameter.taskNames = ['ciBuild']
         and:
-            deliveryBoyConfig.autoPromote = false
+            deliveryBoyConfig.nexus.autoPromote = false
         when:
             Task promoteRepositoryTask = getJustOneTaskByNameOrFail("fakePromoteRepository")
         then:

@@ -179,7 +179,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         Task promoteRepositoryTask = getTaskByNameOrCreateAndUsePlaceholderIfNotSetOrFailIfNotAvailable(taskConfig.promoteRepositoryTask, "promoteRepositoryTask")
         ciBuildTask.dependsOn(promoteRepositoryTask)
         promoteRepositoryTask.mustRunAfter(taskConfig.pushReleaseTask)
-        if (!pluginConfig.autoPromote) {
+        if (!pluginConfig.nexus.autoPromote) {
             //TODO: Try to display it next to promoteRepository task - in ciBuild task execution?
             log.lifecycle("NOTE: Artifacts auto-promotion disabled in configuration. Execute 'promoteRepository' task manually to trigger promotion to Maven Central")
             promoteRepositoryTask.enabled = false
@@ -206,7 +206,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
     private Closure<String> configurePrepareTask(CDeliveryBoyCiPrepareTask prepareTask, CDeliveryBoyPluginConfig pluginConfig) {
         prepareTask.conventionMapping.with {
             ciType = { pluginConfig.ciType }
-            releaseBranch = { pluginConfig.releaseBranch }
+            releaseBranch = { pluginConfig.git.releaseBranch }
         }
     }
 
@@ -222,7 +222,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
                                                       CiVariablesConfig ciVariablesConfig, PropertyReader propertyReader) {
         pushRelease2Task.conventionMapping.with {
             repoAsSlug = { propertyReader.findByName(ciVariablesConfig.repoSlugName) }
-            releaseBranch = { pluginConfig.releaseBranch }
+            releaseBranch = { pluginConfig.git.releaseBranch }
         }
     }
 }

@@ -24,12 +24,12 @@ class BuildConditionEvaluator {
 
     boolean isInReleaseBranch() {
         return environmentVariableReader.findByName(ciConfig.isPrName) == "false" &&
-                environmentVariableReader.findByName(ciConfig.branchNameName) == pluginConfig.releaseBranch
+                environmentVariableReader.findByName(ciConfig.branchNameName) == pluginConfig.git.releaseBranch
     }
 
     boolean isReleaseTriggered() {
-        return !pluginConfig.releaseOnDemand ||
-                environmentVariableReader.findByName(ciConfig.commitMessageName)?.contains(pluginConfig.onDemandReleaseTriggerCommand)
+        return !pluginConfig.trigger.releaseOnDemand ||
+                environmentVariableReader.findByName(ciConfig.commitMessageName)?.contains(pluginConfig.trigger.onDemandReleaseTriggerCommand)
     }
 
     boolean isSnapshotVersion() {
@@ -43,11 +43,11 @@ class BuildConditionEvaluator {
     String getReleaseConditionsAsString() {
         //TODO: Maybe on lifecycle display only not satisfied conditions (how to do it in a clearly way)?
         //TODO: Move information about being a snapshot version here
-        return "Branch name: ${environmentVariableReader.findByName(ciConfig.branchNameName)} (configured: ${pluginConfig.releaseBranch}), " +
+        return "Branch name: ${environmentVariableReader.findByName(ciConfig.branchNameName)} (configured: ${pluginConfig.git.releaseBranch}), " +
                 "is PR: ${environmentVariableReader.findByName(ciConfig.isPrName)}, " +
-                "release on demand: ${pluginConfig.releaseOnDemand}, " +
+                "release on demand: ${pluginConfig.trigger.releaseOnDemand}, " +
                 "on demand trigger command: '${environmentVariableReader.findByName(ciConfig.commitMessageName)}' " +
-                "(configured: '${pluginConfig.onDemandReleaseTriggerCommand}', " +
+                "(configured: '${pluginConfig.trigger.onDemandReleaseTriggerCommand}', " +
                 "is SNAPSHOT: '${isSnapshotVersion()}')"
     }
 }
