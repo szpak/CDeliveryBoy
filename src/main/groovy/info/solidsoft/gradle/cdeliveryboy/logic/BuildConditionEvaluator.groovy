@@ -1,9 +1,9 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
 import groovy.transform.CompileStatic
-import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
-import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
+import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
+import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.ProjectConfig
 
 @CompileStatic
@@ -28,6 +28,9 @@ class BuildConditionEvaluator {
     }
 
     boolean isReleaseTriggered() {
+        if (environmentVariableReader.findByName(pluginConfig.trigger.skipReleaseVariableName) == "true") {
+            return false
+        }
         return !pluginConfig.trigger.releaseOnDemand ||
                 environmentVariableReader.findByName(ciConfig.commitMessageName)?.contains(pluginConfig.trigger.onDemandReleaseTriggerCommand)
     }

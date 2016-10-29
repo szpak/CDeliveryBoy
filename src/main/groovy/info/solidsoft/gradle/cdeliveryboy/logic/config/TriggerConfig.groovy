@@ -4,4 +4,5 @@ class TriggerConfig {
 
     boolean releaseOnDemand = true
     String onDemandReleaseTriggerCommand = "[#DO_RELEASE]"
+    String skipReleaseVariableName = "SKIP_RELEASE"
 }

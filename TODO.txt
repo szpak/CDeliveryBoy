@@ -33,7 +33,7 @@ Milestone X+1:
  - up-to-date status - should be always not up-to-date?  If not, what parameters should be set as @Input (there are internally not used by tasks)?
  - provide requested version number in a commit message - workaround with artificial alpha tags exists
  ✔ eat your own dog food
- - support for SKIP_RELEASE for builds with different Java versions
+ ✔ support for SKIP_RELEASE for builds with different Java versions
  ✔ "Powered by CDeliveryBoy" banner by default in commit message
  ✔ rework configuration using subtypes
 
@@ -60,7 +60,7 @@ Other:
    - version is cached - project version assignment cannot be done in plugin - a separate flag for Axion to disable caching?
    - disable checks in preconfigured configuration - how to distinguish CI and manual release mode (if available)?
    - switch to annotated tags?
- - set username & email in plugin (via "git config" or only in Axion?)
+ - set username & email in plugin (via "git config" or only in Axion?) - PushOp allows to provide author and commiter, but it could break local release
  - GPG
    - keep encrypted gpg keyring instead of importing decrypted key?
    - set signing properties in plugin
