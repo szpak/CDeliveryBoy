@@ -62,6 +62,12 @@ project.version = scmVersion.version
 I've been tired of manual releasing the FOSS projects I maintain. Being professionally deeply involved in Continuous Delivery of high quality
 "Enterprise-Class applications" I wanted to have a light version of CD available for me and other people prefering automation and convenience.
 
+
+## Alternatives
+
+CDeliveryBoy has been created as there was no comprehensive solutions for Gradle available. CDeliveryBoy assumes a developer wants to follow proposed release flow in his/her project to speed up the things. However, in a situation the "default flow" is not enough there is also [Mockito Release Tools](https://github.com/mockito/mockito-release-tools), which emerged in the meantime, offering great flexibility (as the cost of more steep learning curve).
+
+
 ## Additional information 
 
 **The project is available as a technology preview and it definitely will be evolving in the way that breaks backward compatibility.
