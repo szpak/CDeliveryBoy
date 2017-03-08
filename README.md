@@ -2,6 +2,10 @@
 
 Continuous Delivery solution for Gradle based FOSS projects.
 
+## Vision
+
+Long time ago the vision sprung to my mind. Starting my new FOSS project I would like to be able to get a (doing nothing) template with all build-related stuff and Continuous Delivery to the Central Repository fully configured withing a few (at most several) minutes. Just to be able to immediately focus on the main problem to solve (aka "business logic"), not the infrastructure around. CDeliveryBoy is an attempt to achieve that. I already use it in my [projects](https://github.com/szpak/mockito-java8/) and there is a chance it can be useful also for some other FOSS authors.
+
 ## Quick start
 
 To be precisely defined. In the meantime please take a look at the [Dummy CD project](https://github.com/szpak/dummy-cd-project/tree/cDeliveryBoy)
