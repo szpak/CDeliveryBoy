@@ -27,7 +27,7 @@ The project should fulfill the following conditions:
  - configured artifacts upload to Sonatype Nexus OSS (with artifacts signing)
  - configured Travis build
 
-Hint: [gradle-template](https://github.com/szpak/gradle-template/tree/cDeliveryBoy) could be as a starting point. 
+Hint: [gradle-template](https://github.com/szpak/gradle-template/) could be as a starting point. 
 
 ## Sample configuration
 
