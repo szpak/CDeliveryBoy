@@ -39,7 +39,7 @@ dependencies {
     compile localGroovy()
 
     compile 'com.bmuschko:gradle-nexus-plugin:2.3'
-    compile 'pl.allegro.tech.build:axion-release-plugin:1.2.3'
+    compile 'pl.allegro.tech.build:axion-release-plugin:1.5.0'
     compile 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.5.3'
     
     testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-3') {

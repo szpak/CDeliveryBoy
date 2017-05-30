@@ -52,8 +52,9 @@ class DependantPluginsConfigurer {
                 prefix = 'release'
                 versionSeparator = '/'
             }
-            createReleaseCommit = true
-            releaseCommitMessage { version, position -> "Release version: ${version}\n\n[ci skip]" }
+            hooks {
+                pre 'commit', { version, position -> "Release version: ${version}\n\n[ci skip]" }
+            }
             //TODO: Disable checks and other stuff required by Travis
         }
         scheduleBannerAdditionToCommitMessageIfEnabledInConfiguration(axionConfig)
