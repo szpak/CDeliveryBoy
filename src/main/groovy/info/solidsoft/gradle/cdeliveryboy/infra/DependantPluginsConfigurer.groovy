@@ -5,7 +5,6 @@ import groovy.transform.CompileStatic
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import org.gradle.api.Project
 import pl.allegro.tech.build.axion.release.domain.VersionConfig
-import pl.allegro.tech.build.axion.release.domain.scm.ScmPosition
 
 import static info.solidsoft.gradle.cdeliveryboy.CDeliveryBoyPlugin.EXTENSION_NAME
 
@@ -52,29 +51,26 @@ class DependantPluginsConfigurer {
                 prefix = 'release'
                 versionSeparator = '/'
             }
-            hooks {
-                pre 'commit', { version, position -> "Release version: ${version}\n\n[ci skip]" }
-            }
             //TODO: Disable checks and other stuff required by Travis
+            //TODO: minor incrementer - can be overridden in configuration by user
         }
-        scheduleBannerAdditionToCommitMessageIfEnabledInConfiguration(axionConfig)
+        schedulePreReleaseCommitAddition(axionConfig)
         //Note: 'project.version = project.scmVersion.version' cannot be used due to version caching in Axion
     }
 
-    private void scheduleBannerAdditionToCommitMessageIfEnabledInConfiguration(VersionConfig axionConfig) {
-        //it needs to be postponed as user provided configuration is resolved at time when plugins are applied
+    @CompileDynamic
+    def schedulePreReleaseCommitAddition(VersionConfig axionConfig) {
         project.afterEvaluate {
+            //TODO: Provide @DelegatesTo and @ParametersFor PR in Axion
             CDeliveryBoyPluginConfig pluginConfig = project.extensions.getByType(CDeliveryBoyPluginConfig)
-            if (!pluginConfig.git.disablePoweredByMessage) {
-                addBannerToCommitMessage(axionConfig)
+            String bannerMessage = pluginConfig.git.disablePoweredByMessage ? "" : "\n\n" + POWERED_BY_BANNER_MESSAGE
+            axionConfig.hooks {
+                //TODO: How to make commit message configurable in configuration? Template engine https://stackoverflow.com/a/37380388 ?
+                //      Where "version" could be evaluated?
+                pre 'commit', { version, position -> "Release version: ${version}\n\n[ci skip]${bannerMessage}"}
             }
-        }
-    }
 
-    private void addBannerToCommitMessage(VersionConfig axionConfig) {
-        Closure<String> oldReleaseCommitMessageClosure = axionConfig.releaseCommitMessage
-        axionConfig.releaseCommitMessage = { String version, ScmPosition position ->
-            return oldReleaseCommitMessageClosure(version, position) + "\n\n" + POWERED_BY_BANNER_MESSAGE
         }
+
     }
 }
