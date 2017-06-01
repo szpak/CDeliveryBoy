@@ -18,6 +18,8 @@ class DependantPluginsConfigurer {
     private static final String NEXUS_STAGING_PLUGIN_ID = 'io.codearte.nexus-staging'
 
     private static final String POWERED_BY_BANNER_MESSAGE = "Powered by CDeliveryBoy."
+    private static final Closure<String> DEFAULT_RELEASE_COMMIT_MESSAGE_CREATOR = { String version ->
+        "Release version: ${version}\n\n[ci skip]".toString() }
 
     private final Project project
 
@@ -43,7 +45,7 @@ class DependantPluginsConfigurer {
         preconfigureAxion()
     }
 
-    @CompileDynamic
+    @CompileDynamic //TODO: Provide @DelegatesTo and @ParametersFor PR in Axion
     private void preconfigureAxion() {
         VersionConfig axionConfig = project.extensions.getByType(VersionConfig)
         axionConfig.with {
@@ -58,19 +60,22 @@ class DependantPluginsConfigurer {
         //Note: 'project.version = project.scmVersion.version' cannot be used due to version caching in Axion
     }
 
-    @CompileDynamic
-    def schedulePreReleaseCommitAddition(VersionConfig axionConfig) {
+    private void schedulePreReleaseCommitAddition(VersionConfig axionConfig) {
         project.afterEvaluate {
-            //TODO: Provide @DelegatesTo and @ParametersFor PR in Axion
             CDeliveryBoyPluginConfig pluginConfig = project.extensions.getByType(CDeliveryBoyPluginConfig)
-            String bannerMessage = pluginConfig.git.disablePoweredByMessage ? "" : "\n\n" + POWERED_BY_BANNER_MESSAGE
-            axionConfig.hooks {
-                //TODO: How to make commit message configurable in configuration? Template engine https://stackoverflow.com/a/37380388 ?
-                //      Where "version" could be evaluated?
-                pre 'commit', { version, position -> "Release version: ${version}\n\n[ci skip]${bannerMessage}"}
+            if (pluginConfig.git.createReleaseCommit) {
+                addPreReleaseCommitHook(pluginConfig, axionConfig)
             }
-
         }
+    }
 
+    @CompileDynamic
+    private void addPreReleaseCommitHook(CDeliveryBoyPluginConfig pluginConfig, VersionConfig axionConfig) {
+        Closure<String> releaseCommitMessage = pluginConfig.git.overriddenReleaseCommitMessageCreator ?: DEFAULT_RELEASE_COMMIT_MESSAGE_CREATOR
+        String bannerMessage = pluginConfig.git.addPoweredByMessage ? "\n\n" + POWERED_BY_BANNER_MESSAGE : ""
+
+        axionConfig.hooks {
+            pre 'commit', { String version, position -> "${releaseCommitMessage(version)}${bannerMessage}" }
+        }
     }
 }

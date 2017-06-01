@@ -1,41 +1,90 @@
 package info.solidsoft.gradle.cdeliveryboy
 
 import pl.allegro.tech.build.axion.release.domain.VersionConfig
+import pl.allegro.tech.build.axion.release.domain.hooks.CommitHookAction
+import pl.allegro.tech.build.axion.release.domain.hooks.HookContext
 import pl.allegro.tech.build.axion.release.domain.scm.ScmPosition
 
+//TODO: Quite low level Axion internals testing. Could be done easier?
 class PreconfigurationBannerSpec extends BasicProjectBuilderSpec {
 
-    private String version
-    private ScmPosition position
     private VersionConfig scmVersion
+    private HookContext hookContext = Mock()
+    private List anyList = _ as List
 
     def setup() {
         project.apply(plugin: CDeliveryBoyPlugin)
 
-        version = "7.1"
-        position = Stub()
         scmVersion = getAxionConfiguration()
+
+        hookContext.currentVersion >> "7.1"
+        hookContext.position >> Stub(ScmPosition)
     }
 
-    def "should add powered by banner in default configuration"() {
+    def "should add commit hook with default message in default configuration"() {
         when:
             triggerEvaluate()
         then:
-            String message = scmVersion.releaseCommitMessage(version, position)
-            message.contains("CDeliveryBoy")
+            scmVersion.hooks.preReleaseHooks.find { it.class == CommitHookAction }
+    }
+
+    def "should not add commit hook if disabled in configuration"() {
+        given:
+            getDeliveryBoyConfig().git.createReleaseCommit = false
+        when:
+            triggerEvaluate()
+        then:
+            !scmVersion.hooks.preReleaseHooks.find { it.class == CommitHookAction }
+    }
+
+    def "should use default release commit message in default configuration"() {
+        given:
+            CommitHookAction commitHook = triggerEvaluateAndGetCommitHookAction()
+        when:
+            commitHook.act(hookContext)
+        then:
+            1 * hookContext.commit(anyList, { it.startsWith("Release version: 7.1") } as String)
+    }
+
+    def "should add powered by banner in default configuration"() {
+        given:
+            CommitHookAction commitHook = triggerEvaluateAndGetCommitHookAction()
+        when:
+            commitHook.act(hookContext)
+        then:
+            1 * hookContext.commit(anyList, { it.contains("CDeliveryBoy") } as String)
     }
 
     def "should not add powered by banner in explicitly disabled in configuration"() {
         given:
-            getDeliveryBoyConfig().git.disablePoweredByMessage = true
+            getDeliveryBoyConfig().git.addPoweredByMessage = false
+        and:
+            CommitHookAction commitHook = triggerEvaluateAndGetCommitHookAction()
         when:
-            triggerEvaluate()
+            commitHook.act(hookContext)
         then:
-            String message = scmVersion.releaseCommitMessage(version, position)
-            !message.contains("CDeliveryBoy")
+            1 * hookContext.commit(anyList, { !it.contains("CDeliveryBoy") } as String)
+    }
+
+    def "should use overridden commit message if provided"() {
+        given:
+            getDeliveryBoyConfig().git.overriddenReleaseCommitMessageCreator = { version -> "Test release: $version"}
+        and:
+            CommitHookAction commitHook = triggerEvaluateAndGetCommitHookAction()
+        when:
+            commitHook.act(hookContext)
+        then:
+            1 * hookContext.commit(anyList, { it.startsWith("Test release: 7.1") } as String)
     }
 
     private VersionConfig getAxionConfiguration() {
         project.getExtensions().getByType(VersionConfig)
+    }
+
+    private CommitHookAction triggerEvaluateAndGetCommitHookAction() {
+        triggerEvaluate()
+        CommitHookAction commitHook = (CommitHookAction) scmVersion.hooks.preReleaseHooks.find { it.class == CommitHookAction }
+        assert commitHook
+        return commitHook
     }
 }
