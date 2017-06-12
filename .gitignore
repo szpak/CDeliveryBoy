@@ -4,6 +4,7 @@ build/
 .idea/
 *.iml
 out/
+classes/
 
 .poject
 .settings
