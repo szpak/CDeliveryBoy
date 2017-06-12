@@ -17,7 +17,8 @@ class PreconfigurationBannerSpec extends BasicProjectBuilderSpec {
 
         scmVersion = getAxionConfiguration()
 
-        hookContext.currentVersion >> "7.1"
+        hookContext.currentVersion >> "7.1" //deprecated, but still used as of 1.6.0
+        hookContext.releaseVersion >> "7.1"
         hookContext.position >> Stub(ScmPosition)
     }
 
