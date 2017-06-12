@@ -10,7 +10,6 @@ import spock.util.Exceptions
 class PluginEnvValidationITSpec extends BasicProjectBuilderSpec implements TaskTestTrait {
 
     def setup() {
-        project.extensions.extraProperties.set("cDeliveryBoy.disablePluginsAutoConfig", "true") //speed up testing, extra plugins are not needed here
         project.apply(plugin: CDeliveryBoyPlugin)
 
         project.gradle.startParameter.taskNames = ["prepareForCiBuild"]

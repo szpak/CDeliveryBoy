@@ -19,5 +19,7 @@ abstract class BasicProjectBuilderSpec extends Specification implements TaskFixt
     //https://github.com/gradle/gradle/commit/3216f07b3acb4cbbb8241d8a1d50b8db9940f37e
     def setup() {
         project = ProjectBuilder.builder().withProjectDir(tmpProjectDir.root).build()
+
+        project.extensions.extraProperties.set("cDeliveryBoy.disablePluginsAutoConfig", "true") //speed up testing, extra plugins are not needed here
     }
 }
