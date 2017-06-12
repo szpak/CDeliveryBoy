@@ -22,8 +22,8 @@ nexusStaging {
 
 scmVersion {
     hooks {
-        pre 'fileUpdate', [file: 'README.md', pattern: {v, p -> /"info\.solidsoft\.gradle:cdeliveryboy:.*"/},
-                           replacement: {v, p -> "\"info.solidsoft.gradle:cdeliveryboy:$v\""}]
+        pre 'fileUpdate', [file: 'README.md', pattern: {v, p -> /'info\.solidsoft\.gradle:cdeliveryboy:.*'/},
+                           replacement: {v, p -> "'info.solidsoft.gradle:cdeliveryboy:$v'"}]
     }
 }
 
