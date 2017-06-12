@@ -3,6 +3,7 @@ package info.solidsoft.gradle.cdeliveryboy
 import groovy.transform.NotYetImplemented
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
+import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.DryRunTaskConfig
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.Task
@@ -14,6 +15,7 @@ class TaskDependencySpec extends BasicProjectBuilderSpec implements TaskTestTrai
 
     private CDeliveryBoyPluginConfig deliveryBoyConfig
     private BuildConditionEvaluator buildConditionEvaluatorStub
+    private CiVariablesValidator ciVariablesValidatorAllOkStub
 
     def setup() {
         project.extensions.extraProperties.set("cDeliveryBoy.disablePluginsAutoConfig", "true") //speed up testing, extra plugins are not needed here
@@ -28,6 +30,8 @@ class TaskDependencySpec extends BasicProjectBuilderSpec implements TaskTestTrai
 
         buildConditionEvaluatorStub = Stub()
         project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
+        ciVariablesValidatorAllOkStub = Stub()
+        project.plugins.getPlugin(CDeliveryBoyPlugin).ciVariablesValidatorIntegrationTestingHack = ciVariablesValidatorAllOkStub
     }
 
     def "should not prepare release if any of isInReleaseBranch (#isInReleaseBranch) or isReleaseTriggered (#isReleaseTriggered) is not fulfilled "() {

@@ -3,7 +3,7 @@ package info.solidsoft.gradle.cdeliveryboy.logic.config
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class TravisVariablesConfig implements CiVariablesConfig {
+class TravisVariablesConfig extends AbstractCiVariablesConfig {
 
     final String isPrName = 'TRAVIS_PULL_REQUEST'
     final String branchNameName = 'TRAVIS_BRANCH'

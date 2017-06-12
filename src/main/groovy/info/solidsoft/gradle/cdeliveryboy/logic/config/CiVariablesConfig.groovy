@@ -6,4 +6,6 @@ interface CiVariablesConfig {
     String getBranchNameName()
     String getCommitMessageName()
     String getRepoSlugName()    //https://en.wikipedia.org/wiki/Semantic_URL#Slug
+
+    List<String> getAllVariableNames()
 }

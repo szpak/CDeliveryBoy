@@ -9,6 +9,7 @@ import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.config.DefaultProjectConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
+import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.DryRunTaskConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
 import info.solidsoft.gradle.cdeliveryboy.logic.config.TaskConfig
@@ -38,6 +39,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
 
     private Project project //???
     private BuildConditionEvaluator buildConditionEvaluatorIntegrationTestingHack //as field only for integration testing purpose
+    private CiVariablesValidator ciVariablesValidatorIntegrationTestingHack //as field only for integration testing purpose
 
     @Override
     void apply(Project project) {
@@ -64,9 +66,10 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             ProjectConfig projectConfig = new DefaultProjectConfig(project)
             BuildConditionEvaluator buildConditionEvaluator = initializeBuildConditionEvaluator(pluginConfig, ciVariablesConfig, envVariableReader,
                     projectConfig)
+            CiVariablesValidator ciVariablesValidator = initializeCiVariablesValidator(envVariableReader, ciVariablesConfig)
 
-            setDependantTasksForPrepareTask(prepareTask, taskConfig, buildConditionEvaluator)   //TODO: Maybe create some common object to keep plugin configuration?
-            setDependantTasksForBuildTask(pluginConfig, buildTask, taskConfig, buildConditionEvaluator)
+            setDependantTasksForPrepareTask(prepareTask, taskConfig, buildConditionEvaluator, ciVariablesValidator)   //TODO: Maybe create some common object to keep plugin configuration?
+            setDependantTasksForBuildTask(pluginConfig, buildTask, taskConfig, buildConditionEvaluator, ciVariablesValidator)
 
             configurePushRelease2Task(pushRelease2Task, pluginConfig, ciVariablesConfig, envVariableReader)
         }
@@ -104,6 +107,13 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         return new BuildConditionEvaluator(ciConfig, pluginConfig, envVariableReader, projectConfig)
     }
 
+    private CiVariablesValidator initializeCiVariablesValidator(PropertyReader envVariableReader, CiVariablesConfig ciVariablesConfig) {
+        if (ciVariablesValidatorIntegrationTestingHack != null) {   //For integration testing purpose
+            return ciVariablesValidatorIntegrationTestingHack
+        }
+        return new CiVariablesValidator(envVariableReader, ciVariablesConfig)
+    }
+
 
     private TravisVariablesConfig createCiVariablesConfigOrFail(CDeliveryBoyPluginConfig pluginConfig) {
         if (pluginConfig.ciType != 'travis') {
@@ -117,9 +127,10 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
     }
 
     private void setDependantTasksForPrepareTask(CDeliveryBoyCiPrepareTask prepareTask, TaskConfig taskConfig,
-                                                 BuildConditionEvaluator buildConditionEvaluator) {
+                                                 BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator) {
 
         if (isGivenTaskExpectedToBeExecuted(prepareTask)) {
+            ciVariablesValidator.checkExistence()
             prepareTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
 
             if (buildConditionEvaluator.isInReleaseBranch() && buildConditionEvaluator.isReleaseTriggered()) {
@@ -141,9 +152,10 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
     }
 
     private void setDependantTasksForBuildTask(CDeliveryBoyPluginConfig pluginConfig, CDeliveryBoyCiBuildTask ciBuildTask, TaskConfig taskConfig,
-                                               BuildConditionEvaluator buildConditionEvaluator) {
+                                               BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator) {
 
         if (isGivenTaskExpectedToBeExecuted(ciBuildTask)) {
+            ciVariablesValidator.checkExistence()
             ciBuildTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
 
             ciBuildTask.dependsOn(taskConfig.buildProjectTask)
