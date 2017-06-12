@@ -7,7 +7,7 @@ import pl.allegro.tech.build.axion.release.domain.hooks.HookContext
 import pl.allegro.tech.build.axion.release.domain.scm.ScmPosition
 
 //TODO: Quite low level Axion internals testing. Could be done easier?
-class PreconfigurationBannerSpec extends BasicProjectBuilderSpec {
+class PreconfigurationBannerITSpec extends BasicProjectBuilderITSpec {
 
     private VersionConfig scmVersion
     private HookContext hookContext = Mock()

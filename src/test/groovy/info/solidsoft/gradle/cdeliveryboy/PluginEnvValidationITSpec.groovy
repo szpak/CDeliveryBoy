@@ -7,7 +7,7 @@ import info.solidsoft.gradle.cdeliveryboy.logic.exception.MissingRequiredCiVaria
 import org.gradle.api.ProjectConfigurationException
 import spock.util.Exceptions
 
-class PluginEnvValidationITSpec extends BasicProjectBuilderSpec implements TaskTestTrait {
+class PluginEnvValidationITSpec extends BasicProjectBuilderITSpec implements TaskTestTrait {
 
     def setup() {
         project.apply(plugin: CDeliveryBoyPlugin)

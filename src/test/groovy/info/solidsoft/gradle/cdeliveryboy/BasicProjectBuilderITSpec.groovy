@@ -8,7 +8,7 @@ import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 @PackageScope
-abstract class BasicProjectBuilderSpec extends Specification implements TaskFixtureTrait, ProjectAware{
+abstract class BasicProjectBuilderITSpec extends Specification implements TaskFixtureTrait, ProjectAware{
 
     @Rule
     public TemporaryFolder tmpProjectDir = new TemporaryFolder()

@@ -11,7 +11,7 @@ import org.gradle.tooling.BuildException
 import spock.util.Exceptions
 
 @SuppressWarnings("GrMethodMayBeStatic")
-class TaskDependencySpec extends BasicProjectBuilderSpec implements TaskTestTrait {
+class TaskDependencyITSpec extends BasicProjectBuilderITSpec implements TaskTestTrait {
 
     private CDeliveryBoyPluginConfig deliveryBoyConfig
     private BuildConditionEvaluator buildConditionEvaluatorStub
