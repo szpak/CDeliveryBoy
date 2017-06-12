@@ -140,7 +140,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
                 prepareTask.dependsOn("currentVersion") //TODO: Move it somehow to configuration
             }
         } else {
-            log.lifecycle("${prepareTask.name} will not be executed") //TODO: Switch to info
+            log.lifecycle("'${prepareTask.name}' task will not be executed") //TODO: Switch to info
         }
     }
 
@@ -172,7 +172,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
                 }
             }
         } else {
-            log.lifecycle("${ciBuildTask.name} will not be executed.")  //TODO: Switch to info
+            log.lifecycle("'${ciBuildTask.name}' task will not be executed.")  //TODO: Switch to info
         }
 
     }
