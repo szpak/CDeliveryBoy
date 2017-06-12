@@ -1,6 +1,5 @@
 package info.solidsoft.gradle.cdeliveryboy
 
-import org.gradle.testfixtures.ProjectBuilder
 import pl.allegro.tech.build.axion.release.domain.VersionConfig
 import pl.allegro.tech.build.axion.release.domain.hooks.CommitHookAction
 import pl.allegro.tech.build.axion.release.domain.hooks.HookContext
@@ -14,10 +13,6 @@ class PreconfigurationBannerITSpec extends BasicProjectBuilderITSpec {
     private List anyList = _ as List
 
     def setup() {
-        //Override project from BasicProjectBuilderSpec as extra properties (such as "cDeliveryBoy.disablePluginsAutoConfig") cannot be removed
-        project = ProjectBuilder.builder().withProjectDir(tmpProjectDir.root).build()
-        project.apply(plugin: CDeliveryBoyPlugin)
-
         scmVersion = getAxionConfiguration()
 
         hookContext.currentVersion >> "7.1" //deprecated, but still used as of 1.6.0

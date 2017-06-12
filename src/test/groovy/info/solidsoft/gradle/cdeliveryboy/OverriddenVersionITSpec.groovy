@@ -1,9 +1,6 @@
 package info.solidsoft.gradle.cdeliveryboy
 
 import com.github.zafarkhaja.semver.Version
-import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
-import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
-import org.gradle.testfixtures.ProjectBuilder
 import pl.allegro.tech.build.axion.release.domain.VersionConfig
 import pl.allegro.tech.build.axion.release.domain.VersionIncrementerContext
 import pl.allegro.tech.build.axion.release.domain.scm.ScmPosition
@@ -14,16 +11,7 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
     private VersionIncrementerContext versionIncrementerContextStub = Stub()
 
     def setup() {
-        //Override project from BasicProjectBuilderSpec as extra properties (such as "cDeliveryBoy.disablePluginsAutoConfig") cannot be removed
-        project = ProjectBuilder.builder().withProjectDir(tmpProjectDir.root).build()
-        project.apply(plugin: CDeliveryBoyPlugin)
         project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
-
-        CDeliveryBoyPluginConfig deliveryBoyConfig = getDeliveryBoyConfig()
-        deliveryBoyConfig.dryRun = true
-
-        CiVariablesValidator ciVariablesValidatorAllOkStub = Stub()
-        project.plugins.getPlugin(CDeliveryBoyPlugin).ciVariablesValidatorIntegrationTestingHack = ciVariablesValidatorAllOkStub
 
         versionIncrementerContextStub.currentVersion >> Version.valueOf("0.5.1")
         versionIncrementerContextStub.scmPosition >> Stub(ScmPosition)

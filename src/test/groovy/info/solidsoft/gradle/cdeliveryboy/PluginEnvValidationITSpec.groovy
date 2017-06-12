@@ -1,23 +1,14 @@
 package info.solidsoft.gradle.cdeliveryboy
 
-import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
-import info.solidsoft.gradle.cdeliveryboy.logic.config.DryRunTaskConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.exception.MissingRequiredCiVariableException
 import org.gradle.api.ProjectConfigurationException
 import spock.util.Exceptions
 
-class PluginEnvValidationITSpec extends BasicProjectBuilderITSpec implements TaskTestTrait {
+class PluginEnvValidationITSpec extends BasicProjectBuilderITSpec {
 
     def setup() {
-        project.apply(plugin: CDeliveryBoyPlugin)
-
         project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
-
-        CDeliveryBoyPluginConfig deliveryBoyConfig = getDeliveryBoyConfig()
-        deliveryBoyConfig.dryRun = true
-
-        createAllDependantTasks(new DryRunTaskConfig())
 
         CiVariablesValidator ciVariablesValidatorStub = Stub() {
             checkExistence() >> { throw new MissingRequiredCiVariableException(["MISSING_NAME_1"]) }

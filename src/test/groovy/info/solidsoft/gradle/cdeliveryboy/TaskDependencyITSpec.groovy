@@ -3,34 +3,19 @@ package info.solidsoft.gradle.cdeliveryboy
 import groovy.transform.NotYetImplemented
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
-import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
-import info.solidsoft.gradle.cdeliveryboy.logic.config.DryRunTaskConfig
 import org.gradle.api.ProjectConfigurationException
 import org.gradle.api.Task
 import org.gradle.tooling.BuildException
 import spock.util.Exceptions
 
 @SuppressWarnings("GrMethodMayBeStatic")
-class TaskDependencyITSpec extends BasicProjectBuilderITSpec implements TaskTestTrait {
+class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
 
-    private CDeliveryBoyPluginConfig deliveryBoyConfig
     private BuildConditionEvaluator buildConditionEvaluatorStub
-    private CiVariablesValidator ciVariablesValidatorAllOkStub
 
     def setup() {
-        project.apply(plugin: CDeliveryBoyPlugin)
-
-        project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
-
-        deliveryBoyConfig = getDeliveryBoyConfig()
-        deliveryBoyConfig.dryRun = true
-
-        createAllDependantTasks(new DryRunTaskConfig())
-
         buildConditionEvaluatorStub = Stub()
         project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
-        ciVariablesValidatorAllOkStub = Stub()
-        project.plugins.getPlugin(CDeliveryBoyPlugin).ciVariablesValidatorIntegrationTestingHack = ciVariablesValidatorAllOkStub
     }
 
     def "should not prepare release if any of isInReleaseBranch (#isInReleaseBranch) or isReleaseTriggered (#isReleaseTriggered) is not fulfilled "() {
@@ -39,7 +24,7 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec implements TaskTest
             buildConditionEvaluatorStub.isReleaseTriggered() >> isReleaseTriggered
             buildConditionEvaluatorStub.isSnapshotVersion() >> true
         and:
-            project.tasks.create("currentVersion")
+            project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
         and:
             Task ciBuildTask = getJustOneTaskByNameOrFail("prepareForCiBuild")
         expect:
@@ -54,6 +39,8 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec implements TaskTest
     def "should depend on createRelease task if in release branch and release triggered"() {
         given:
             stubForReleaseWithSnapshot()
+        and:
+            project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
         when:
             Task ciBuildTask = getJustOneTaskByNameOrFail("prepareForCiBuild")
         then:
@@ -96,7 +83,6 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec implements TaskTest
             stubForReleaseWithSnapshot()
         and:
             project.gradle.startParameter.taskNames = ['prepareForCiBuild']
-            project.tasks.create("createRelease")
         and:
             project.extensions.extraProperties.set("cDeliveryBoy.dryRun", "false")
         and:
