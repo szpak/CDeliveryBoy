@@ -53,8 +53,8 @@ class DependantPluginsConfigurer {
                 prefix = 'release'
                 versionSeparator = '/'
             }
+            versionIncrementer('incrementMinor')
             //TODO: Disable checks and other stuff required by Travis
-            //TODO: minor incrementer - can be overridden in configuration by user
         }
         schedulePreReleaseCommitAddition(axionConfig)
         //Note: 'project.version = project.scmVersion.version' cannot be used due to version caching in Axion

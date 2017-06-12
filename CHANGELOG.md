@@ -2,6 +2,7 @@
 
 ## 0.5.0 - unreleased
 
+ - Increment minor version number by default 
  - Validate existence of required environment variables in advance
   
 ## 0.4.0 - 2017-07-02
