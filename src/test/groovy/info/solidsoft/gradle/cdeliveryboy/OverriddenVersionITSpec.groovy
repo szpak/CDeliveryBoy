@@ -8,36 +8,37 @@ import pl.allegro.tech.build.axion.release.domain.scm.ScmPosition
 import spock.lang.PendingFeature
 
 import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.forcedVersionWithValue
+import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.noVersionForced
 
 class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
 
     private VersionIncrementerContext versionIncrementerContextStub = Stub()
+    private BuildConditionEvaluator buildConditionEvaluatorStub = Stub()
 
     def setup() {
         project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
 
         versionIncrementerContextStub.currentVersion >> Version.valueOf("0.5.1")
         versionIncrementerContextStub.scmPosition >> Stub(ScmPosition)
+
+        //TODO: Move to separate fixture in Trait?
+        buildConditionEvaluatorStub.forcedVersion() >> noVersionForced()
+        buildConditionEvaluatorStub.isReleaseTriggered() >> true
+        buildConditionEvaluatorStub.isInReleaseBranch() >> true
+        buildConditionEvaluatorStub.isSnapshotVersion() >> true
+        project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
     }
 
     def "should increase minor version by default"() {
-        given:
-            triggerEvaluate()
-            Closure versionIncrementer = getAxionConfiguration().versionIncrementer
-        when:
-            String releaseVersion = versionIncrementer.call(versionIncrementerContextStub)
-        then:
-            releaseVersion == "0.6.0"
+        expect:
+            triggerEvaluateAndReturnReleaseVersion() == "0.6.0"
     }
 
     def "should allow to override in Axion configuration default version incrementer"() {
         given:
             getAxionConfiguration().versionIncrementer('incrementMajor')
-        and:
-            triggerEvaluate()
-            Closure versionIncrementer = getAxionConfiguration().versionIncrementer
         when:
-            String releaseVersion = versionIncrementer.call(versionIncrementerContextStub)
+            String releaseVersion = triggerEvaluateAndReturnReleaseVersion()
         then:
             releaseVersion == "1.0.0"
     }
@@ -48,21 +49,23 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
     def "should use direct release version configured in commit message"() {
         given:
             String forcedVersion = "0.7.7"
-        and:
-            BuildConditionEvaluator buildConditionEvaluatorStub = Stub()
-            buildConditionEvaluatorStub.forcedVersion() >> forcedVersionWithValue(forcedVersion)
-            project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
-        and:
-            triggerEvaluate()   //TODO: Extract those lines to asserting method
-            Closure versionIncrementer = getAxionConfiguration().versionIncrementer
         when:
-            String releaseVersion = versionIncrementer.call(versionIncrementerContextStub)
+            String releaseVersion = triggerEvaluateAndReturnReleaseVersion()
         then:
+            buildConditionEvaluatorStub.forcedVersion() >> forcedVersionWithValue(forcedVersion)    //in then to override previous stubbing
             releaseVersion == forcedVersion
     }
 
     @PendingFeature
     def "should use version number incrementer configured in commit message"() {
+    }
+
+    private String triggerEvaluateAndReturnReleaseVersion() {
+        triggerEvaluate()
+        //and
+        Closure versionIncrementer = getAxionConfiguration().versionIncrementer
+        String releaseVersion = versionIncrementer.call(versionIncrementerContextStub)
+        return releaseVersion
     }
 
     //TODO: Move to a separate trait?
