@@ -22,4 +22,13 @@ class ForcedVersion {
     static ForcedVersion forcedVersionWithValue(String forcedValue) {
         return new ForcedVersion(true, forcedValue)
     }
+
+    @Override
+    String toString() {
+        if (isForced) {
+            return "forced: $forcedValue"
+        } else {
+            return "no-forced-version"
+        }
+    }
 }

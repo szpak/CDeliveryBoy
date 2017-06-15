@@ -5,6 +5,7 @@ import groovy.transform.CompileStatic
 import info.solidsoft.gradle.cdeliveryboy.infra.AxionReleaseVersionSetter
 import info.solidsoft.gradle.cdeliveryboy.infra.DependantPluginsConfigurer
 import info.solidsoft.gradle.cdeliveryboy.infra.EnvironmentVariableReader
+import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageDeterminer
 import info.solidsoft.gradle.cdeliveryboy.infra.ProjectPropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
@@ -67,8 +68,9 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             CiVariablesConfig ciVariablesConfig = createCiVariablesConfigOrFail(pluginConfig)
             PropertyReader envVariableReader = new EnvironmentVariableReader()
             ProjectConfig projectConfig = new DefaultProjectConfig(project)
+            ForcedVersionInCommitMessageDeterminer forcedVersionDeterminer = new ForcedVersionInCommitMessageDeterminer()
             BuildConditionEvaluator buildConditionEvaluator = initializeBuildConditionEvaluator(pluginConfig, ciVariablesConfig, envVariableReader,
-                    projectConfig)
+                    projectConfig, forcedVersionDeterminer)
             CiVariablesValidator ciVariablesValidator = initializeCiVariablesValidator(envVariableReader, ciVariablesConfig)
 
             ReleaseVersionDeterminer releaseVersionDeterminer = new ReleaseVersionDeterminer(AxionReleaseVersionSetter.forProject(project))
@@ -105,11 +107,12 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
     }
 
     private BuildConditionEvaluator initializeBuildConditionEvaluator(CDeliveryBoyPluginConfig pluginConfig, CiVariablesConfig ciConfig,
-                                                                      PropertyReader envVariableReader, ProjectConfig projectConfig) {
+                                                                      PropertyReader envVariableReader, ProjectConfig projectConfig,
+                                                                      ForcedVersionInCommitMessageDeterminer forcedVersionDeterminer) {
         if (buildConditionEvaluatorIntegrationTestingHack != null) {  //For integration testing purpose
             return buildConditionEvaluatorIntegrationTestingHack
         }
-        return new BuildConditionEvaluator(ciConfig, pluginConfig, envVariableReader, projectConfig)
+        return new BuildConditionEvaluator(ciConfig, pluginConfig, envVariableReader, projectConfig, forcedVersionDeterminer)
     }
 
     private CiVariablesValidator initializeCiVariablesValidator(PropertyReader envVariableReader, CiVariablesConfig ciVariablesConfig) {

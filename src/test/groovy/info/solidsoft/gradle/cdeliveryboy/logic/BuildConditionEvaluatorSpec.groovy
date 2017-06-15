@@ -1,5 +1,6 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
+import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageDeterminer
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -8,19 +9,25 @@ import info.solidsoft.gradle.cdeliveryboy.logic.config.TriggerConfig
 import spock.lang.Specification
 import spock.lang.Subject
 
+import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.forcedVersionWithValue
+import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.noVersionForced
+
+
 @SuppressWarnings("GroovyPointlessBoolean")
 class BuildConditionEvaluatorSpec extends Specification {
 
     private static final String TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME = "TEST_COMMIT_MSG"
-    public static final String TEST_RELEASE_COMMAND = "TEST_RELEASE_COMMAND"
-    public static final String NOT_TRIGGERING_COMMIT_MESSAGE = "any commit message"
-    public static final String TRIGGERING_COMMIT_MESSAGE = TEST_RELEASE_COMMAND + " and more"
-    public static final String TEST_SKIP_RELEASE_VARIABLE_NAME = "TEST_SKIP_RELEASE"
+    private static final String TEST_RELEASE_COMMAND = "TEST_RELEASE_COMMAND"
+    private static final String NOT_TRIGGERING_COMMIT_MESSAGE = "any commit message"
+    private static final String TRIGGERING_COMMIT_MESSAGE = TEST_RELEASE_COMMAND + " and more"
+    private static final String TEST_SKIP_RELEASE_VARIABLE_NAME = "TEST_SKIP_RELEASE"
+    private static final String SOME_COMMIT_MESSAGE = "anyCommitMessage"
 
     private CiVariablesConfig ciVariablesConfig = Stub()
     private CDeliveryBoyPluginConfig pluginConfig = Stub()
     private PropertyReader environmentVariableReader = Stub()
     private ProjectConfig projectConfig = Stub()
+    private ForcedVersionInCommitMessageDeterminer forcedVersionDeterminer = Stub()
 
     private TriggerConfig trigger = Stub()
 
@@ -29,7 +36,8 @@ class BuildConditionEvaluatorSpec extends Specification {
 
     //TODO: How to test it in a sensible way? Prefabricated dependencies from a test data builder?
     void setup() {
-        buildConditionEvaluator = new BuildConditionEvaluator(ciVariablesConfig, pluginConfig, environmentVariableReader, projectConfig)
+        buildConditionEvaluator = new BuildConditionEvaluator(ciVariablesConfig, pluginConfig, environmentVariableReader, projectConfig,
+                forcedVersionDeterminer)
         //and
         pluginConfig.trigger >> trigger
         trigger.onDemandReleaseTriggerCommand >> TEST_RELEASE_COMMAND
@@ -89,5 +97,15 @@ class BuildConditionEvaluatorSpec extends Specification {
             "true"           || false
             "false"          || true
             null             || true
+    }
+
+    def "should get forced version for commit message if provided (#forcedVersion)"() {
+        given:
+            environmentVariableReader.findByName(TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME) >> SOME_COMMIT_MESSAGE
+            forcedVersionDeterminer.determineForcedVersionInCommitMessage(SOME_COMMIT_MESSAGE) >> forcedVersion
+        expect:
+            buildConditionEvaluator.forcedVersion() == forcedVersion
+        where:
+            forcedVersion << [forcedVersionWithValue("0.5.0"), noVersionForced()]
     }
 }
