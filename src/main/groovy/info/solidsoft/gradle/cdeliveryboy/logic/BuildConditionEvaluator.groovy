@@ -43,14 +43,19 @@ class BuildConditionEvaluator {
         return (pluginConfig.dryRun || projectConfig.globalDryRun) && pluginConfig.dryRunForceNonSnapshotVersion
     }
 
+    ForcedVersion forcedVersion() {
+        //TODO: Not implemented
+        return ForcedVersion.noVersionForced()
+    }
+
     String getReleaseConditionsAsString() {
         //TODO: Maybe on lifecycle display only not satisfied conditions (how to do it in a clearly way)?
-        //TODO: Move information about being a snapshot version here
         return "Branch name: ${environmentVariableReader.findByName(ciConfig.branchNameName)} (configured: ${pluginConfig.git.releaseBranch}), " +
                 "is PR: ${environmentVariableReader.findByName(ciConfig.isPrName)}, " +
                 "release on demand: ${pluginConfig.trigger.releaseOnDemand}, " +
                 "on demand trigger command: '${environmentVariableReader.findByName(ciConfig.commitMessageName)}' " +
                 "(configured: '${pluginConfig.trigger.onDemandReleaseTriggerCommand}', " +
                 "is SNAPSHOT: '${isSnapshotVersion()}')"
+                //TODO: forcedVersion
     }
 }
