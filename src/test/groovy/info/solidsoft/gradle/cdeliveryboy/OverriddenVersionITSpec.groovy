@@ -52,12 +52,24 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
         when:
             String releaseVersion = triggerEvaluateAndReturnReleaseVersion()
         then:
-            buildConditionEvaluatorStub.forcedVersion() >> forcedVersionWithValue(forcedVersion)    //in then to override previous stubbing
+            buildConditionEvaluatorStub.forcedVersion() >> forcedVersionWithValue(forcedVersion)    //in "then" to override previous stubbing
             releaseVersion == forcedVersion
     }
 
-    @PendingFeature
-    def "should use version number incrementer configured in commit message"() {
+    def "should use version number incrementer (#forcedIncrementerName) configured in commit message"() {
+        when:
+            String releaseVersion = triggerEvaluateAndReturnReleaseVersion()
+        then:
+            buildConditionEvaluatorStub.forcedVersion() >> forcedVersionWithValue(forcedIncrementerName)    //in "then" to override previous stubbing
+            versionIncrementerContextStub.currentVersion >> Version.valueOf("0.5.1-beta1")
+        and:
+            releaseVersion == expectedVersion
+        where:
+            forcedIncrementerName || expectedVersion
+            "MAJOR"               || "1.0.0"
+            "MINOR"               || "0.6.0"
+            "PATCH"               || "0.5.2"
+            "PRERELEASE"          || "0.5.1-beta2"
     }
 
     private String triggerEvaluateAndReturnReleaseVersion() {

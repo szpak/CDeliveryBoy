@@ -26,9 +26,40 @@ class ForcedVersionInCommitMessageDeterminerSpec extends Specification {
         then:
             determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
         where:
-            commitMessage   || expectedVersion
-            "[#0.1.5-beta]" || "0.1.5-beta"
-            "[#1.0.0-alpha1]" || "1.0.0-alpha1"
+            commitMessage      || expectedVersion
+            "[#0.1.5-beta]"    || "0.1.5-beta"
+            "[#1.0.0-alpha1]"  || "1.0.0-alpha1"
             "[#1.0.0-alpha-1]" || "1.0.0-alpha-1"
+    }
+
+    def "should find incrementer name in commit message (#commitMessage)"() {
+        when:
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage(commitMessage)
+        then:
+            determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
+        where:
+            commitMessage   || expectedVersion
+            "[#MAJOR]"      || "MAJOR"
+            "[#MINOR]"      || "MINOR"
+            "[#PATCH]"      || "PATCH"
+            "[#PRERELEASE]" || "PRERELEASE"
+    }
+
+    def "should ignore unknown incrementers in commit message"() {
+        when:
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage("[#UNKNOWN]")
+        then:
+            determinedForcedVersion == ForcedVersion.noVersionForced()
+    }
+
+    def "should prefer exact version over incrementer in commit message (#commitMessage)"() {
+        when:
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage(commitMessage)
+        then:
+            determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
+        where:
+            commitMessage      || expectedVersion
+            "[#MAJOR][#1.2.6]" || "1.2.6"
+            "[#0.0.1][#MINOR]" || "0.0.1"
     }
 }

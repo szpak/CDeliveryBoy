@@ -16,13 +16,19 @@ class ForcedVersionInCommitMessageDeterminer {
     //https://github.com/mojombo/semver/issues/232
     private static final Pattern SEM_VER_PATTERN = Pattern.compile("\\[#((0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)" +
             "(-(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\\+[0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*)?)\\]")
+    private static final Pattern INCREMENTER_PATTERN = Pattern.compile("\\[#(MAJOR|MINOR|PATCH|PRERELEASE)\\]")
 
     ForcedVersion determineForcedVersionInCommitMessage(String commitMessage) {
         Matcher matcher = SEM_VER_PATTERN.matcher(commitMessage)
         if (matcher.find()) {
             return forcedVersionWithValue(matcher.group(1))
-        } else {
-            return noVersionForced()
         }
+
+        Matcher incrementerMatcher = INCREMENTER_PATTERN.matcher(commitMessage)
+        if (incrementerMatcher.find()) {
+            return forcedVersionWithValue(incrementerMatcher.group(1))
+        }
+
+        return noVersionForced()
     }
 }
