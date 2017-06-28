@@ -57,8 +57,8 @@ class BuildConditionEvaluator {
                 "is PR: ${environmentVariableReader.findByName(ciConfig.isPrName)}, " +
                 "release on demand: ${pluginConfig.trigger.releaseOnDemand}, " +
                 "on demand trigger command: '${environmentVariableReader.findByName(ciConfig.commitMessageName)}' " +
-                "(configured: '${pluginConfig.trigger.onDemandReleaseTriggerCommand}', " +
-                "is SNAPSHOT: '${isSnapshotVersion()}')"
-                //TODO: forcedVersion
+                "(configured: '${pluginConfig.trigger.onDemandReleaseTriggerCommand})', " +
+                "is SNAPSHOT: '${isSnapshotVersion()}', " +
+                "forced version: '${forcedVersion()}'"
     }
 }

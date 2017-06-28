@@ -1,8 +1,10 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
+import groovy.transform.Canonical
 import groovy.transform.CompileStatic
 
 @CompileStatic
+@Canonical
 class ForcedVersion {
 
     private static final ForcedVersion noForcedVersion = new ForcedVersion(false, null)
