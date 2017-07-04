@@ -1,5 +1,10 @@
 # C(ontinuous)DeliveryBoy changelog
 
+## 0.6.0 - 2017-07-04
+
+ - Release to Gradle Portal Plugin - [#5](https://github.com/szpak/CDeliveryBoy/issues/5)
+ - Synchronize CHEANGELOG with GitHub release notes - [#6](https://github.com/szpak/CDeliveryBoy/issues/6) 
+
 ## 0.5.0 - 2017-07-04
 
  - Ability to override release version in commit message - [#4](https://github.com/szpak/CDeliveryBoy/issues/4)
