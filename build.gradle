@@ -58,7 +58,7 @@ dependencies {
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
     testCompile 'net.bytebuddy:byte-buddy:1.7.1'
-    testCompile 'org.objenesis:objenesis:2.4'   //for mocking in Spock
+    testCompile 'org.objenesis:objenesis:2.6'   //for mocking in Spock
     testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.1'
 }
 
