@@ -37,7 +37,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'info.solidsoft.gradle:cdeliveryboy:0.5.0'
+        classpath 'info.solidsoft.gradle:cdeliveryboy:0.5.1'
     }
 }
 
