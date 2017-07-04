@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'info.solidsoft.gradle:cdeliveryboy:0.5.0'
+        classpath 'info.solidsoft.gradle:cdeliveryboy:0.5.1'
         classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
     }
 }
