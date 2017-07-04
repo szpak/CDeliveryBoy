@@ -10,6 +10,11 @@ before_install:
  - "export TRAVIS_COMMIT_MSG=$(git log --format=%B -n 1 $TRAVIS_COMMIT)"
  - git config user.email "szpak-ci@users.noreply.github.com"
  - git config user.name "Szpak CI Bot"
+ # Chandler for release notes synchronization
+ - ruby --version
+ - rvm install 2.4.1
+ - ruby --version
+ - gem install chandler
 
 install: true
 script:
@@ -24,6 +29,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/.rvm/
 
 env:
   global:
