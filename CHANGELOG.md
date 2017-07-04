@@ -2,8 +2,13 @@
 
 ## 0.6.0 - 2017-07-04
 
+ - Upgrade gradle-nexus-staging-plugin, Axion plugin and Spock
+ - Tune Gradle Portal Plugin release from Travis
+
+## 0.5.1 - 2017-07-04
+
  - Release to Gradle Portal Plugin - [#5](https://github.com/szpak/CDeliveryBoy/issues/5)
- - Synchronize CHEANGELOG with GitHub release notes - [#6](https://github.com/szpak/CDeliveryBoy/issues/6) 
+ - Synchronize CHANGELOG with GitHub release notes - [#6](https://github.com/szpak/CDeliveryBoy/issues/6) 
 
 ## 0.5.0 - 2017-07-04
 
