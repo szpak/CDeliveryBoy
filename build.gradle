@@ -1,9 +1,13 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url 'https://plugins.gradle.org/m2/'    //for plugin-publish-plugin
+        }
     }
     dependencies {
         classpath 'info.solidsoft.gradle:cdeliveryboy:0.5.0'
+        classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
     }
 }
 
@@ -93,3 +97,34 @@ modifyPom {
 }
 
 uploadArchives.dependsOn { check }
+
+
+if (hasProperty('pluginPortal')) {
+
+    apply plugin: 'com.gradle.plugin-publish'
+
+    pluginBundle {
+        website = 'https://github.com/szpak/CDeliveryBoy/'
+        vcsUrl = 'https://github.com/szpak/CDeliveryBoy/'
+
+        plugins {
+            plugin {
+                id = 'info.solidsoft.cdeliveryboy'
+                displayName = 'CDeliveryBoy'
+                description = 'Continuous Delivery for Gradle-based libraries and tools'
+                tags = ['cd', 'continuous-delivery', 'maven-central', 'nexus', 'release']
+            }
+        }
+
+        mavenCoordinates {
+            groupId = project.group
+            artifactId = project.name
+        }
+    }
+
+    publishPlugins {
+        onlyIf { ciBuild.isInReleaseMode }
+        mustRunAfter releaseRepository
+    }
+    ciBuild.dependsOn publishPlugins
+}
