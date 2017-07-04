@@ -3,13 +3,13 @@ package info.solidsoft.gradle.cdeliveryboy.infra
 import info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion
 import spock.lang.Specification
 
-class ForcedVersionInCommitMessageDeterminerSpec extends Specification {
+class ForcedVersionInCommitMessageFinderSpec extends Specification {
 
-    private ForcedVersionInCommitMessageDeterminer forcedVersionDeterminer = new ForcedVersionInCommitMessageDeterminer()
+    private ForcedVersionInCommitMessageFinder forcedVersionDeterminer = new ForcedVersionInCommitMessageFinder()
 
     def "should find simple version in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage(commitMessage)
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
         then:
             determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
         where:
@@ -22,7 +22,7 @@ class ForcedVersionInCommitMessageDeterminerSpec extends Specification {
 
     def "should find pre-release version in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage(commitMessage)
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
         then:
             determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
         where:
@@ -34,7 +34,7 @@ class ForcedVersionInCommitMessageDeterminerSpec extends Specification {
 
     def "should find incrementer name in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage(commitMessage)
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
         then:
             determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
         where:
@@ -47,14 +47,14 @@ class ForcedVersionInCommitMessageDeterminerSpec extends Specification {
 
     def "should ignore unknown incrementers in commit message"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage("[#UNKNOWN]")
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided("[#UNKNOWN]")
         then:
             determinedForcedVersion == ForcedVersion.noVersionForced()
     }
 
     def "should prefer exact version over incrementer in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.determineForcedVersionInCommitMessage(commitMessage)
+            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
         then:
             determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
         where:

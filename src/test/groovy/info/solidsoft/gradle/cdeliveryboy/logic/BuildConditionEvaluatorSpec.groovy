@@ -1,6 +1,6 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
-import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageDeterminer
+import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageFinder
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -27,7 +27,7 @@ class BuildConditionEvaluatorSpec extends Specification {
     private CDeliveryBoyPluginConfig pluginConfig = Stub()
     private PropertyReader environmentVariableReader = Stub()
     private ProjectConfig projectConfig = Stub()
-    private ForcedVersionInCommitMessageDeterminer forcedVersionDeterminer = Stub()
+    private ForcedVersionInCommitMessageFinder forcedVersionDeterminer = Stub()
 
     private TriggerConfig trigger = Stub()
 
@@ -102,7 +102,7 @@ class BuildConditionEvaluatorSpec extends Specification {
     def "should get forced version for commit message if provided (#forcedVersion)"() {
         given:
             environmentVariableReader.findByName(TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME) >> SOME_COMMIT_MESSAGE
-            forcedVersionDeterminer.determineForcedVersionInCommitMessage(SOME_COMMIT_MESSAGE) >> forcedVersion
+            forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(SOME_COMMIT_MESSAGE) >> forcedVersion
         expect:
             buildConditionEvaluator.forcedVersion() == forcedVersion
         where:

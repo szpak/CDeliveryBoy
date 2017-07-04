@@ -1,7 +1,7 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
 import groovy.transform.CompileStatic
-import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageDeterminer
+import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageFinder
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -14,10 +14,10 @@ class BuildConditionEvaluator {
     private final CDeliveryBoyPluginConfig pluginConfig
     private final PropertyReader environmentVariableReader
     private final ProjectConfig projectConfig
-    private final ForcedVersionInCommitMessageDeterminer forcedVersionDeterminer
+    private final ForcedVersionInCommitMessageFinder forcedVersionDeterminer
 
     BuildConditionEvaluator(CiVariablesConfig ciConfig, CDeliveryBoyPluginConfig pluginConfig, PropertyReader environmentVariableReader,
-                            ProjectConfig projectConfig, ForcedVersionInCommitMessageDeterminer forcedVersionDeterminer) {
+                            ProjectConfig projectConfig, ForcedVersionInCommitMessageFinder forcedVersionDeterminer) {
         this.ciConfig = ciConfig
         this.pluginConfig = pluginConfig
         this.environmentVariableReader = environmentVariableReader
@@ -48,7 +48,7 @@ class BuildConditionEvaluator {
 
     ForcedVersion forcedVersion() {
         String commitMessage = environmentVariableReader.findByName(ciConfig.commitMessageName)
-        return forcedVersionDeterminer.determineForcedVersionInCommitMessage(commitMessage)
+        return forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
     }
 
     String getReleaseConditionsAsString() {

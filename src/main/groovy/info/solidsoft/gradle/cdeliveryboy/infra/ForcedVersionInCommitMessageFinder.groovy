@@ -10,25 +10,23 @@ import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.forcedVersi
 import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.noVersionForced
 
 @CompileStatic
-class ForcedVersionInCommitMessageDeterminer {
+class ForcedVersionInCommitMessageFinder {
 
-    private static final Pattern SIMPLE_SEM_VER_PATTERN = Pattern.compile("\\[#(\\d+\\.\\d+\\.\\d+)\\]")
     //https://github.com/mojombo/semver/issues/232
     private static final Pattern SEM_VER_PATTERN = Pattern.compile("\\[#((0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)" +
             "(-(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(\\.(0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*)?(\\+[0-9a-zA-Z-]+(\\.[0-9a-zA-Z-]+)*)?)\\]")
     private static final Pattern INCREMENTER_PATTERN = Pattern.compile("\\[#(MAJOR|MINOR|PATCH|PRERELEASE)\\]")
 
-    ForcedVersion determineForcedVersionInCommitMessage(String commitMessage) {
-        Matcher matcher = SEM_VER_PATTERN.matcher(commitMessage)
-        if (matcher.find()) {
-            return forcedVersionWithValue(matcher.group(1))
-        }
+    private static final List<Pattern> SUPPORTED_PATTERNS = [SEM_VER_PATTERN, INCREMENTER_PATTERN]
 
-        Matcher incrementerMatcher = INCREMENTER_PATTERN.matcher(commitMessage)
-        if (incrementerMatcher.find()) {
-            return forcedVersionWithValue(incrementerMatcher.group(1))
-        }
+    ForcedVersion findForcedVersionInCommitMessageIfProvided(String commitMessage) {
 
+        for (Pattern pattern : SUPPORTED_PATTERNS) {
+            Matcher matcher = pattern.matcher(commitMessage)
+            if (matcher.find()) {
+                return forcedVersionWithValue(matcher.group(1))
+            }
+        }
         return noVersionForced()
     }
 }
