@@ -2,6 +2,8 @@
 
 ## 0.5.0 - unreleased
 
+ - Ability to override release version in commit message - [#4](https://github.com/szpak/CDeliveryBoy/issues/4)
+ - Ability to override incrementer in commit message - [#4](https://github.com/szpak/CDeliveryBoy/issues/4)
  - Increment minor version number by default 
  - Validate existence of required environment variables in advance
   

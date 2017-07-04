@@ -2,20 +2,23 @@ package info.solidsoft.gradle.cdeliveryboy
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import info.solidsoft.gradle.cdeliveryboy.infra.AxionReleaseVersionOverrider
 import info.solidsoft.gradle.cdeliveryboy.infra.DependantPluginsConfigurer
 import info.solidsoft.gradle.cdeliveryboy.infra.EnvironmentVariableReader
+import info.solidsoft.gradle.cdeliveryboy.infra.OverriddenVersionInCommitMessageFinder
 import info.solidsoft.gradle.cdeliveryboy.infra.ProjectPropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
+import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
 import info.solidsoft.gradle.cdeliveryboy.infra.config.DefaultProjectConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
+import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
+import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.DryRunTaskConfig
-import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
+import info.solidsoft.gradle.cdeliveryboy.logic.config.ProjectConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.TaskConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.TravisVariablesConfig
-import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
-import info.solidsoft.gradle.cdeliveryboy.logic.config.ProjectConfig
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -60,15 +63,19 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             PropertyOverrider propertyOverrider = new PropertyOverrider(new ProjectPropertyReader(project))
             propertyOverrider.applyCommandLineProperties(pluginConfig)
 
+            //TODO: Move objects creation to uber factory/context which (as the whole) could be injected in integration tests (as mock/spu and stubbed as needed)
             TaskConfig taskConfig = createTaskConfigOrFail(pluginConfig) //TODO: Make it a part of public configuration?
             CiVariablesConfig ciVariablesConfig = createCiVariablesConfigOrFail(pluginConfig)
             PropertyReader envVariableReader = new EnvironmentVariableReader()
             ProjectConfig projectConfig = new DefaultProjectConfig(project)
+            OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer = new OverriddenVersionInCommitMessageFinder()
             BuildConditionEvaluator buildConditionEvaluator = initializeBuildConditionEvaluator(pluginConfig, ciVariablesConfig, envVariableReader,
-                    projectConfig)
+                    projectConfig, overriddenVersionDeterminer)
             CiVariablesValidator ciVariablesValidator = initializeCiVariablesValidator(envVariableReader, ciVariablesConfig)
 
-            setDependantTasksForPrepareTask(prepareTask, taskConfig, buildConditionEvaluator, ciVariablesValidator)   //TODO: Maybe create some common object to keep plugin configuration?
+            ReleaseVersionDeterminer releaseVersionDeterminer = new ReleaseVersionDeterminer(AxionReleaseVersionOverrider.forProject(project))
+
+            setDependantTasksForPrepareTask(prepareTask, taskConfig, buildConditionEvaluator, ciVariablesValidator, releaseVersionDeterminer)   //TODO: Maybe create some common object to keep plugin configuration?
             setDependantTasksForBuildTask(pluginConfig, buildTask, taskConfig, buildConditionEvaluator, ciVariablesValidator)
 
             configurePushRelease2Task(pushRelease2Task, pluginConfig, ciVariablesConfig, envVariableReader)
@@ -100,11 +107,12 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
     }
 
     private BuildConditionEvaluator initializeBuildConditionEvaluator(CDeliveryBoyPluginConfig pluginConfig, CiVariablesConfig ciConfig,
-                                                                      PropertyReader envVariableReader, ProjectConfig projectConfig) {
+                                                                      PropertyReader envVariableReader, ProjectConfig projectConfig,
+                                                                      OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer) {
         if (buildConditionEvaluatorIntegrationTestingHack != null) {  //For integration testing purpose
             return buildConditionEvaluatorIntegrationTestingHack
         }
-        return new BuildConditionEvaluator(ciConfig, pluginConfig, envVariableReader, projectConfig)
+        return new BuildConditionEvaluator(ciConfig, pluginConfig, envVariableReader, projectConfig, overriddenVersionDeterminer)
     }
 
     private CiVariablesValidator initializeCiVariablesValidator(PropertyReader envVariableReader, CiVariablesConfig ciVariablesConfig) {
@@ -127,13 +135,15 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
     }
 
     private void setDependantTasksForPrepareTask(CDeliveryBoyCiPrepareTask prepareTask, TaskConfig taskConfig,
-                                                 BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator) {
+                                                 BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator,
+                                                 ReleaseVersionDeterminer releaseVersionDeterminer) {
 
         if (isGivenTaskExpectedToBeExecuted(prepareTask)) {
             ciVariablesValidator.checkExistence()
             prepareTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
 
             if (buildConditionEvaluator.isInReleaseBranch() && buildConditionEvaluator.isReleaseTriggered()) {
+                releaseVersionDeterminer.determineAndOverrideReleaseVersionIfRequested(buildConditionEvaluator.overriddenVersion())
                 prepareTask.dependsOn(getJustOneTaskByNameOrFail(taskConfig.createReleaseTask))
                 prepareTask.isInReleaseMode = true
             } else {

@@ -8,6 +8,8 @@ import org.gradle.api.Task
 import org.gradle.tooling.BuildException
 import spock.util.Exceptions
 
+import static info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion.noVersionOverridden
+
 @SuppressWarnings("GrMethodMayBeStatic")
 class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
 
@@ -160,5 +162,6 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
         buildConditionEvaluatorStub.isInReleaseBranch() >> true
         buildConditionEvaluatorStub.isReleaseTriggered() >> true
         buildConditionEvaluatorStub.isSnapshotVersion() >> true
+        buildConditionEvaluatorStub.overriddenVersion() >> noVersionOverridden()
     }
 }

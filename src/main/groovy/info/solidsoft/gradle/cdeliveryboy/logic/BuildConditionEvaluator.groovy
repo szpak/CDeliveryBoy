@@ -1,6 +1,7 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
 import groovy.transform.CompileStatic
+import info.solidsoft.gradle.cdeliveryboy.infra.OverriddenVersionInCommitMessageFinder
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -13,13 +14,15 @@ class BuildConditionEvaluator {
     private final CDeliveryBoyPluginConfig pluginConfig
     private final PropertyReader environmentVariableReader
     private final ProjectConfig projectConfig
+    private final OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer
 
     BuildConditionEvaluator(CiVariablesConfig ciConfig, CDeliveryBoyPluginConfig pluginConfig, PropertyReader environmentVariableReader,
-                            ProjectConfig projectConfig) {
+                            ProjectConfig projectConfig, OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer) {
         this.ciConfig = ciConfig
         this.pluginConfig = pluginConfig
         this.environmentVariableReader = environmentVariableReader
         this.projectConfig = projectConfig
+        this.overriddenVersionDeterminer = overriddenVersionDeterminer
     }
 
     boolean isInReleaseBranch() {
@@ -43,14 +46,19 @@ class BuildConditionEvaluator {
         return (pluginConfig.dryRun || projectConfig.globalDryRun) && pluginConfig.dryRunForceNonSnapshotVersion
     }
 
+    OverriddenVersion overriddenVersion() {
+        String commitMessage = environmentVariableReader.findByName(ciConfig.commitMessageName)
+        return overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(commitMessage)
+    }
+
     String getReleaseConditionsAsString() {
         //TODO: Maybe on lifecycle display only not satisfied conditions (how to do it in a clearly way)?
-        //TODO: Move information about being a snapshot version here
         return "Branch name: ${environmentVariableReader.findByName(ciConfig.branchNameName)} (configured: ${pluginConfig.git.releaseBranch}), " +
                 "is PR: ${environmentVariableReader.findByName(ciConfig.isPrName)}, " +
                 "release on demand: ${pluginConfig.trigger.releaseOnDemand}, " +
                 "on demand trigger command: '${environmentVariableReader.findByName(ciConfig.commitMessageName)}' " +
-                "(configured: '${pluginConfig.trigger.onDemandReleaseTriggerCommand}', " +
-                "is SNAPSHOT: '${isSnapshotVersion()}')"
+                "(configured: '${pluginConfig.trigger.onDemandReleaseTriggerCommand})', " +
+                "is SNAPSHOT: '${isSnapshotVersion()}', " +
+                "overridden version: '${overriddenVersion()}'"
     }
 }
