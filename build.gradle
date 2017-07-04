@@ -3,7 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'info.solidsoft.gradle:cdeliveryboy:0.4.0'
+        classpath 'info.solidsoft.gradle:cdeliveryboy:0.5.0'
     }
 }
 
@@ -11,8 +11,11 @@ apply plugin: 'groovy'
 apply plugin: 'info.solidsoft.cdeliveryboy'
 
 cDeliveryBoy {
+    tasks {
+        promoteRepositoryTask = "releaseRepository"
+    }
     nexus {
-        autoPromote = false
+        autoPromote = true
     }
 }
 
