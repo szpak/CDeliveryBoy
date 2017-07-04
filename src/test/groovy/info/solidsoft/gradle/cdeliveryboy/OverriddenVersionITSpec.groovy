@@ -7,8 +7,8 @@ import pl.allegro.tech.build.axion.release.domain.VersionIncrementerContext
 import pl.allegro.tech.build.axion.release.domain.scm.ScmPosition
 import spock.lang.PendingFeature
 
-import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.forcedVersionWithValue
-import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.noVersionForced
+import static info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion.overriddenVersionWithValue
+import static info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion.noVersionOverridden
 
 class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
 
@@ -22,7 +22,7 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
         versionIncrementerContextStub.scmPosition >> Stub(ScmPosition)
 
         //TODO: Move to separate fixture in Trait?
-        buildConditionEvaluatorStub.forcedVersion() >> noVersionForced()
+        buildConditionEvaluatorStub.overriddenVersion() >> noVersionOverridden()
         buildConditionEvaluatorStub.isReleaseTriggered() >> true
         buildConditionEvaluatorStub.isInReleaseBranch() >> true
         buildConditionEvaluatorStub.isSnapshotVersion() >> true
@@ -48,28 +48,28 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
 
     def "should use direct release version configured in commit message"() {
         given:
-            String forcedVersion = "0.7.7"
+            String overriddenVersion = "0.7.7"
         when:
             String releaseVersion = triggerEvaluateAndReturnReleaseVersion()
         then:
-            buildConditionEvaluatorStub.forcedVersion() >> forcedVersionWithValue(forcedVersion)    //in "then" to override previous stubbing
-            releaseVersion == forcedVersion
+            buildConditionEvaluatorStub.overriddenVersion() >> overriddenVersionWithValue(overriddenVersion)    //in "then" to override previous stubbing
+            releaseVersion == overriddenVersion
     }
 
-    def "should use version number incrementer (#forcedIncrementerName) configured in commit message"() {
+    def "should use version number incrementer (#overriddenIncrementerName) configured in commit message"() {
         when:
             String releaseVersion = triggerEvaluateAndReturnReleaseVersion()
         then:
-            buildConditionEvaluatorStub.forcedVersion() >> forcedVersionWithValue(forcedIncrementerName)    //in "then" to override previous stubbing
+            buildConditionEvaluatorStub.overriddenVersion() >> overriddenVersionWithValue(overriddenIncrementerName)    //in "then" to override previous stubbing
             versionIncrementerContextStub.currentVersion >> Version.valueOf("0.5.1-beta1")
         and:
             releaseVersion == expectedVersion
         where:
-            forcedIncrementerName || expectedVersion
-            "MAJOR"               || "1.0.0"
-            "MINOR"               || "0.6.0"
-            "PATCH"               || "0.5.2"
-            "PRERELEASE"          || "0.5.1-beta2"
+            overriddenIncrementerName || expectedVersion
+            "MAJOR"                   || "1.0.0"
+            "MINOR"                   || "0.6.0"
+            "PATCH"                   || "0.5.2"
+            "PRERELEASE"              || "0.5.1-beta2"
     }
 
     private String triggerEvaluateAndReturnReleaseVersion() {

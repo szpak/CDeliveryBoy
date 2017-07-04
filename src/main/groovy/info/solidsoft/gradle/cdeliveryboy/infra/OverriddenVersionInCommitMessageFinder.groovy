@@ -1,16 +1,16 @@
 package info.solidsoft.gradle.cdeliveryboy.infra
 
 import groovy.transform.CompileStatic
-import info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion
+import info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
-import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.forcedVersionWithValue
-import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.noVersionForced
+import static OverriddenVersion.overriddenVersionWithValue
+import static OverriddenVersion.noVersionOverridden
 
 @CompileStatic
-class ForcedVersionInCommitMessageFinder {
+class OverriddenVersionInCommitMessageFinder {
 
     //https://github.com/mojombo/semver/issues/232
     private static final Pattern SEM_VER_PATTERN = Pattern.compile("\\[#((0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)" +
@@ -19,14 +19,14 @@ class ForcedVersionInCommitMessageFinder {
 
     private static final List<Pattern> SUPPORTED_PATTERNS = [SEM_VER_PATTERN, INCREMENTER_PATTERN]
 
-    ForcedVersion findForcedVersionInCommitMessageIfProvided(String commitMessage) {
+    OverriddenVersion findOverriddenVersionInCommitMessageIfProvided(String commitMessage) {
 
         for (Pattern pattern : SUPPORTED_PATTERNS) {
             Matcher matcher = pattern.matcher(commitMessage)
             if (matcher.find()) {
-                return forcedVersionWithValue(matcher.group(1))
+                return overriddenVersionWithValue(matcher.group(1))
             }
         }
-        return noVersionForced()
+        return noVersionOverridden()
     }
 }

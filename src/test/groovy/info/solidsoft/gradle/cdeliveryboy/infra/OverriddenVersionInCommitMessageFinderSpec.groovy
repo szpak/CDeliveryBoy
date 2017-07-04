@@ -1,17 +1,17 @@
 package info.solidsoft.gradle.cdeliveryboy.infra
 
-import info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion
+import info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion
 import spock.lang.Specification
 
-class ForcedVersionInCommitMessageFinderSpec extends Specification {
+class OverriddenVersionInCommitMessageFinderSpec extends Specification {
 
-    private ForcedVersionInCommitMessageFinder forcedVersionDeterminer = new ForcedVersionInCommitMessageFinder()
+    private OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer = new OverriddenVersionInCommitMessageFinder()
 
     def "should find simple version in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
+            OverriddenVersion overriddenVersion = overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(commitMessage)
         then:
-            determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
+            overriddenVersion == OverriddenVersion.overriddenVersionWithValue(expectedVersion)
         where:
             commitMessage               || expectedVersion
             "[#0.1.5]"                  || "0.1.5"
@@ -22,9 +22,9 @@ class ForcedVersionInCommitMessageFinderSpec extends Specification {
 
     def "should find pre-release version in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
+            OverriddenVersion overriddenVersion = overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(commitMessage)
         then:
-            determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
+            overriddenVersion == OverriddenVersion.overriddenVersionWithValue(expectedVersion)
         where:
             commitMessage      || expectedVersion
             "[#0.1.5-beta]"    || "0.1.5-beta"
@@ -34,9 +34,9 @@ class ForcedVersionInCommitMessageFinderSpec extends Specification {
 
     def "should find incrementer name in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
+            OverriddenVersion overriddenVersion = overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(commitMessage)
         then:
-            determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
+            overriddenVersion == OverriddenVersion.overriddenVersionWithValue(expectedVersion)
         where:
             commitMessage   || expectedVersion
             "[#MAJOR]"      || "MAJOR"
@@ -47,16 +47,16 @@ class ForcedVersionInCommitMessageFinderSpec extends Specification {
 
     def "should ignore unknown incrementers in commit message"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided("[#UNKNOWN]")
+            OverriddenVersion overriddenVersion = overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided("[#UNKNOWN]")
         then:
-            determinedForcedVersion == ForcedVersion.noVersionForced()
+            overriddenVersion == OverriddenVersion.noVersionOverridden()
     }
 
     def "should prefer exact version over incrementer in commit message (#commitMessage)"() {
         when:
-            ForcedVersion determinedForcedVersion = forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
+            OverriddenVersion overriddenVersion = overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(commitMessage)
         then:
-            determinedForcedVersion == ForcedVersion.forcedVersionWithValue(expectedVersion)
+            overriddenVersion == OverriddenVersion.overriddenVersionWithValue(expectedVersion)
         where:
             commitMessage      || expectedVersion
             "[#MAJOR][#1.2.6]" || "1.2.6"

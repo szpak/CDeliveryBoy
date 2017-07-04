@@ -5,7 +5,7 @@ import groovy.transform.CompileStatic
 import info.solidsoft.gradle.cdeliveryboy.infra.AxionReleaseVersionOverrider
 import info.solidsoft.gradle.cdeliveryboy.infra.DependantPluginsConfigurer
 import info.solidsoft.gradle.cdeliveryboy.infra.EnvironmentVariableReader
-import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageFinder
+import info.solidsoft.gradle.cdeliveryboy.infra.OverriddenVersionInCommitMessageFinder
 import info.solidsoft.gradle.cdeliveryboy.infra.ProjectPropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
@@ -68,9 +68,9 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             CiVariablesConfig ciVariablesConfig = createCiVariablesConfigOrFail(pluginConfig)
             PropertyReader envVariableReader = new EnvironmentVariableReader()
             ProjectConfig projectConfig = new DefaultProjectConfig(project)
-            ForcedVersionInCommitMessageFinder forcedVersionDeterminer = new ForcedVersionInCommitMessageFinder()
+            OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer = new OverriddenVersionInCommitMessageFinder()
             BuildConditionEvaluator buildConditionEvaluator = initializeBuildConditionEvaluator(pluginConfig, ciVariablesConfig, envVariableReader,
-                    projectConfig, forcedVersionDeterminer)
+                    projectConfig, overriddenVersionDeterminer)
             CiVariablesValidator ciVariablesValidator = initializeCiVariablesValidator(envVariableReader, ciVariablesConfig)
 
             ReleaseVersionDeterminer releaseVersionDeterminer = new ReleaseVersionDeterminer(AxionReleaseVersionOverrider.forProject(project))
@@ -108,11 +108,11 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
 
     private BuildConditionEvaluator initializeBuildConditionEvaluator(CDeliveryBoyPluginConfig pluginConfig, CiVariablesConfig ciConfig,
                                                                       PropertyReader envVariableReader, ProjectConfig projectConfig,
-                                                                      ForcedVersionInCommitMessageFinder forcedVersionDeterminer) {
+                                                                      OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer) {
         if (buildConditionEvaluatorIntegrationTestingHack != null) {  //For integration testing purpose
             return buildConditionEvaluatorIntegrationTestingHack
         }
-        return new BuildConditionEvaluator(ciConfig, pluginConfig, envVariableReader, projectConfig, forcedVersionDeterminer)
+        return new BuildConditionEvaluator(ciConfig, pluginConfig, envVariableReader, projectConfig, overriddenVersionDeterminer)
     }
 
     private CiVariablesValidator initializeCiVariablesValidator(PropertyReader envVariableReader, CiVariablesConfig ciVariablesConfig) {
@@ -143,7 +143,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             prepareTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
 
             if (buildConditionEvaluator.isInReleaseBranch() && buildConditionEvaluator.isReleaseTriggered()) {
-                releaseVersionDeterminer.determineAndForceReleaseVersionIfRequested(buildConditionEvaluator.forcedVersion())
+                releaseVersionDeterminer.determineAndOverrideReleaseVersionIfRequested(buildConditionEvaluator.overriddenVersion())
                 prepareTask.dependsOn(getJustOneTaskByNameOrFail(taskConfig.createReleaseTask))
                 prepareTask.isInReleaseMode = true
             } else {

@@ -1,7 +1,7 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
 import groovy.transform.CompileStatic
-import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageFinder
+import info.solidsoft.gradle.cdeliveryboy.infra.OverriddenVersionInCommitMessageFinder
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -14,15 +14,15 @@ class BuildConditionEvaluator {
     private final CDeliveryBoyPluginConfig pluginConfig
     private final PropertyReader environmentVariableReader
     private final ProjectConfig projectConfig
-    private final ForcedVersionInCommitMessageFinder forcedVersionDeterminer
+    private final OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer
 
     BuildConditionEvaluator(CiVariablesConfig ciConfig, CDeliveryBoyPluginConfig pluginConfig, PropertyReader environmentVariableReader,
-                            ProjectConfig projectConfig, ForcedVersionInCommitMessageFinder forcedVersionDeterminer) {
+                            ProjectConfig projectConfig, OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer) {
         this.ciConfig = ciConfig
         this.pluginConfig = pluginConfig
         this.environmentVariableReader = environmentVariableReader
         this.projectConfig = projectConfig
-        this.forcedVersionDeterminer = forcedVersionDeterminer
+        this.overriddenVersionDeterminer = overriddenVersionDeterminer
     }
 
     boolean isInReleaseBranch() {
@@ -46,9 +46,9 @@ class BuildConditionEvaluator {
         return (pluginConfig.dryRun || projectConfig.globalDryRun) && pluginConfig.dryRunForceNonSnapshotVersion
     }
 
-    ForcedVersion forcedVersion() {
+    OverriddenVersion overriddenVersion() {
         String commitMessage = environmentVariableReader.findByName(ciConfig.commitMessageName)
-        return forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(commitMessage)
+        return overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(commitMessage)
     }
 
     String getReleaseConditionsAsString() {
@@ -59,6 +59,6 @@ class BuildConditionEvaluator {
                 "on demand trigger command: '${environmentVariableReader.findByName(ciConfig.commitMessageName)}' " +
                 "(configured: '${pluginConfig.trigger.onDemandReleaseTriggerCommand})', " +
                 "is SNAPSHOT: '${isSnapshotVersion()}', " +
-                "forced version: '${forcedVersion()}'"
+                "overridden version: '${overriddenVersion()}'"
     }
 }

@@ -35,12 +35,12 @@ class AxionReleaseVersionOverrider implements ReleaseVersionOverrider {
     }
 
     @Override
-    void overrideReleaseVersion(String forcedVersion) {
-        if (SemVerIncrementer.isSupported(forcedVersion)) {
-            axionConfig.versionIncrementer(SemVerIncrementer.valueOf(forcedVersion).toAxionIncrementerName())
+    void overrideReleaseVersion(String overriddenVersion) {
+        if (SemVerIncrementer.isSupported(overriddenVersion)) {
+            axionConfig.versionIncrementer(SemVerIncrementer.valueOf(overriddenVersion).toAxionIncrementerName())
         } else {
             axionConfig.versionIncrementer = { VersionIncrementerContext context ->
-                return Version.valueOf(forcedVersion)
+                return Version.valueOf(overriddenVersion)
             }
         }
     }

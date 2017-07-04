@@ -7,7 +7,7 @@ interface ReleaseVersionOverrider {
      *
      * Expects an one of supported incrementers or a Semantic Versioning compilant version number.
      *
-     * @param forcedVersion forced version to use
+     * @param overriddenVersion overridden version to use
      */
-    void overrideReleaseVersion(String forcedVersion)
+    void overrideReleaseVersion(String overriddenVersion)
 }

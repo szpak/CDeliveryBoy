@@ -1,7 +1,7 @@
 package info.solidsoft.gradle.cdeliveryboy.infra
 
 import groovy.transform.CompileStatic
-import info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion
+import info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion
 
 @CompileStatic
 class ReleaseVersionDeterminer {
@@ -12,10 +12,10 @@ class ReleaseVersionDeterminer {
         this.releaseVersionSetter = releaseVersionSetter
     }
 
-    void determineAndForceReleaseVersionIfRequested(ForcedVersion forcedVersion) {
-        if (!forcedVersion.isForced) {
+    void determineAndOverrideReleaseVersionIfRequested(OverriddenVersion overriddenVersion) {
+        if (!overriddenVersion.isOverridden) {
             return
         }
-        releaseVersionSetter.overrideReleaseVersion(forcedVersion.forcedValue)
+        releaseVersionSetter.overrideReleaseVersion(overriddenVersion.overriddenValue)
     }
 }

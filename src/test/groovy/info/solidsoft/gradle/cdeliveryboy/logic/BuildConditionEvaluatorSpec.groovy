@@ -1,6 +1,6 @@
 package info.solidsoft.gradle.cdeliveryboy.logic
 
-import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageFinder
+import info.solidsoft.gradle.cdeliveryboy.infra.OverriddenVersionInCommitMessageFinder
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -9,8 +9,8 @@ import info.solidsoft.gradle.cdeliveryboy.logic.config.TriggerConfig
 import spock.lang.Specification
 import spock.lang.Subject
 
-import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.forcedVersionWithValue
-import static info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion.noVersionForced
+import static OverriddenVersion.overriddenVersionWithValue
+import static OverriddenVersion.noVersionOverridden
 
 
 @SuppressWarnings("GroovyPointlessBoolean")
@@ -27,7 +27,7 @@ class BuildConditionEvaluatorSpec extends Specification {
     private CDeliveryBoyPluginConfig pluginConfig = Stub()
     private PropertyReader environmentVariableReader = Stub()
     private ProjectConfig projectConfig = Stub()
-    private ForcedVersionInCommitMessageFinder forcedVersionDeterminer = Stub()
+    private OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer = Stub()
 
     private TriggerConfig trigger = Stub()
 
@@ -37,7 +37,7 @@ class BuildConditionEvaluatorSpec extends Specification {
     //TODO: How to test it in a sensible way? Prefabricated dependencies from a test data builder?
     void setup() {
         buildConditionEvaluator = new BuildConditionEvaluator(ciVariablesConfig, pluginConfig, environmentVariableReader, projectConfig,
-                forcedVersionDeterminer)
+                overriddenVersionDeterminer)
         //and
         pluginConfig.trigger >> trigger
         trigger.onDemandReleaseTriggerCommand >> TEST_RELEASE_COMMAND
@@ -99,13 +99,13 @@ class BuildConditionEvaluatorSpec extends Specification {
             null             || true
     }
 
-    def "should get forced version for commit message if provided (#forcedVersion)"() {
+    def "should get override version for commit message if provided (#overriddenVersion)"() {
         given:
             environmentVariableReader.findByName(TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME) >> SOME_COMMIT_MESSAGE
-            forcedVersionDeterminer.findForcedVersionInCommitMessageIfProvided(SOME_COMMIT_MESSAGE) >> forcedVersion
+            overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(SOME_COMMIT_MESSAGE) >> overriddenVersion
         expect:
-            buildConditionEvaluator.forcedVersion() == forcedVersion
+            buildConditionEvaluator.overriddenVersion() == overriddenVersion
         where:
-            forcedVersion << [forcedVersionWithValue("0.5.0"), noVersionForced()]
+            overriddenVersion << [overriddenVersionWithValue("0.5.0"), noVersionOverridden()]
     }
 }
