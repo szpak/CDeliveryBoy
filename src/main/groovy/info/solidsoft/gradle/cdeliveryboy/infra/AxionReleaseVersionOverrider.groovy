@@ -7,7 +7,7 @@ import pl.allegro.tech.build.axion.release.domain.VersionConfig
 import pl.allegro.tech.build.axion.release.domain.VersionIncrementerContext
 
 @CompileStatic
-class AxionReleaseVersionSetter implements ReleaseVersionSetter {
+class AxionReleaseVersionOverrider implements ReleaseVersionOverrider {
 
     @CompileStatic
     private enum SemVerIncrementer {
@@ -30,31 +30,23 @@ class AxionReleaseVersionSetter implements ReleaseVersionSetter {
 
     private final VersionConfig axionConfig
 
-    private AxionReleaseVersionSetter(VersionConfig axionConfig) {
+    private AxionReleaseVersionOverrider(VersionConfig axionConfig) {
         this.axionConfig = axionConfig
     }
 
-    /**
-     * Sets release version using Axion incrementer.
-     *
-     * Expects an one of supported incrementers or a Semantic Versioning compilant version number.
-     *
-     * @param forcedVersion forced version to use
-     */
     @Override
-    void setReleaseVersion(String forcedVersion) {
+    void overrideReleaseVersion(String forcedVersion) {
         if (SemVerIncrementer.isSupported(forcedVersion)) {
             axionConfig.versionIncrementer(SemVerIncrementer.valueOf(forcedVersion).toAxionIncrementerName())
-            return
-        }
-
-        axionConfig.versionIncrementer = { VersionIncrementerContext context ->
-            return Version.valueOf(forcedVersion)
+        } else {
+            axionConfig.versionIncrementer = { VersionIncrementerContext context ->
+                return Version.valueOf(forcedVersion)
+            }
         }
     }
 
-    static AxionReleaseVersionSetter forProject(Project project) {
+    static AxionReleaseVersionOverrider forProject(Project project) {
         VersionConfig axionConfig = project.extensions.getByType(VersionConfig)
-        return new AxionReleaseVersionSetter(axionConfig)
+        return new AxionReleaseVersionOverrider(axionConfig)
     }
 }

@@ -6,9 +6,9 @@ import info.solidsoft.gradle.cdeliveryboy.logic.ForcedVersion
 @CompileStatic
 class ReleaseVersionDeterminer {
 
-    private final ReleaseVersionSetter releaseVersionSetter
+    private final ReleaseVersionOverrider releaseVersionSetter
 
-    ReleaseVersionDeterminer(ReleaseVersionSetter releaseVersionSetter) {
+    ReleaseVersionDeterminer(ReleaseVersionOverrider releaseVersionSetter) {
         this.releaseVersionSetter = releaseVersionSetter
     }
 
@@ -16,6 +16,6 @@ class ReleaseVersionDeterminer {
         if (!forcedVersion.isForced) {
             return
         }
-        releaseVersionSetter.setReleaseVersion(forcedVersion.forcedValue)
+        releaseVersionSetter.overrideReleaseVersion(forcedVersion.forcedValue)
     }
 }

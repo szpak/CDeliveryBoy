@@ -2,7 +2,7 @@ package info.solidsoft.gradle.cdeliveryboy
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import info.solidsoft.gradle.cdeliveryboy.infra.AxionReleaseVersionSetter
+import info.solidsoft.gradle.cdeliveryboy.infra.AxionReleaseVersionOverrider
 import info.solidsoft.gradle.cdeliveryboy.infra.DependantPluginsConfigurer
 import info.solidsoft.gradle.cdeliveryboy.infra.EnvironmentVariableReader
 import info.solidsoft.gradle.cdeliveryboy.infra.ForcedVersionInCommitMessageFinder
@@ -73,7 +73,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
                     projectConfig, forcedVersionDeterminer)
             CiVariablesValidator ciVariablesValidator = initializeCiVariablesValidator(envVariableReader, ciVariablesConfig)
 
-            ReleaseVersionDeterminer releaseVersionDeterminer = new ReleaseVersionDeterminer(AxionReleaseVersionSetter.forProject(project))
+            ReleaseVersionDeterminer releaseVersionDeterminer = new ReleaseVersionDeterminer(AxionReleaseVersionOverrider.forProject(project))
 
             setDependantTasksForPrepareTask(prepareTask, taskConfig, buildConditionEvaluator, ciVariablesValidator, releaseVersionDeterminer)   //TODO: Maybe create some common object to keep plugin configuration?
             setDependantTasksForBuildTask(pluginConfig, buildTask, taskConfig, buildConditionEvaluator, ciVariablesValidator)
