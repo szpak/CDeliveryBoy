@@ -51,11 +51,11 @@ dependencies {
     compile 'pl.allegro.tech.build:axion-release-plugin:1.7.0'
     compile 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
     
-    testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-3') {
+    testCompile('org.spockframework:spock-core:1.1-groovy-2.4') {
         //groovy 2.4.x is already provided by Gradle itself
         exclude group: 'org.codehaus.groovy', module: 'groovy-all'
     }
-    testCompile 'net.bytebuddy:byte-buddy:1.4.33' //for mocking in Spock - 1.5.x cannot be used due to: https://github.com/spockframework/spock/issues/678
+    testCompile 'net.bytebuddy:byte-buddy:1.7.1'
     testCompile 'org.objenesis:objenesis:2.4'   //for mocking in Spock
     testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.1'
 }
