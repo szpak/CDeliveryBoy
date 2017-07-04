@@ -48,8 +48,8 @@ dependencies {
     compile localGroovy()
 
     compile 'com.bmuschko:gradle-nexus-plugin:2.3.1'
-    compile 'pl.allegro.tech.build:axion-release-plugin:1.5.0'
-    compile 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.8.0'
+    compile 'pl.allegro.tech.build:axion-release-plugin:1.7.0'
+    compile 'io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.9.0'
     
     testCompile('org.spockframework:spock-core:1.1-groovy-2.4-rc-3') {
         //groovy 2.4.x is already provided by Gradle itself
