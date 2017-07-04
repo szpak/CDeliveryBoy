@@ -44,7 +44,9 @@ buildscript {
 apply plugin: 'info.solidsoft.cdeliveryboy'
 
 cDeliveryBoy {
-    autoPromote = false
+    nexus {
+        autoPromote = false
+    }
 }
 
 nexusStaging {
