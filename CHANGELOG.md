@@ -20,6 +20,7 @@
 ## 0.4.0 - 2017-06-02
 
  - Rework plugin configuration (to more component oriented)
+ - Support for SKIP_RELEASE environment variable
  - Add (optional) "Powered by" banner in release commit message
  - Bring compatibility with Gradle 3
  - Upgrade key dependencies
