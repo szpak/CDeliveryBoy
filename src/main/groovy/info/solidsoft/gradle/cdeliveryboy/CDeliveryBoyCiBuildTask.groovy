@@ -13,14 +13,10 @@ class CDeliveryBoyCiBuildTask extends ConventionTask {
 
     private static Logger log = Logging.getLogger(MethodHandles.lookup().lookupClass())
 
-    boolean isInReleaseMode = false//TODO: What annotation as this are just an internal fields?
     String modeConditions
 
     @TaskAction
     void doSomethingBetterNameNeeded() {
-        if (!isInReleaseMode) {
-            log.lifecycle("Not in release mode. Conditions: $modeConditions")
-            //TODO: Can be set as up-to-date during execution?
-        }
+        log.lifecycle(modeConditions)
     }
 }

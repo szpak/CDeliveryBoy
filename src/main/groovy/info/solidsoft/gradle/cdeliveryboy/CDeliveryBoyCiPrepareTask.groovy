@@ -17,15 +17,13 @@ class CDeliveryBoyCiPrepareTask extends ConventionTask {
     @Input
     String releaseBranch
 
-    boolean isInReleaseMode //TODO: What annotation as this are just an internal fields?
     String modeConditions
 
     @TaskAction
     void prepare() {
-        if (!isInReleaseMode) {
-            log.lifecycle("Not in release mode. Conditions: $modeConditions")
-            //TODO: Can be set as up-to-date during execution?
-            //      'this.outputs.upToDateWhen { ??? }' - when it is called?
-        }
+        log.lifecycle(modeConditions)
+
+        //TODO: Can be set as up-to-date during execution?
+        //      'this.outputs.upToDateWhen { ??? }' - when it is called?
     }
 }
