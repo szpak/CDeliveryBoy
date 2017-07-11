@@ -23,8 +23,7 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
 
         //TODO: Move to separate fixture in Trait?
         buildConditionEvaluatorStub.overriddenVersion() >> noVersionOverridden()
-        buildConditionEvaluatorStub.isReleaseTriggered() >> true
-        buildConditionEvaluatorStub.isInReleaseBranch() >> true
+        buildConditionEvaluatorStub.isInReleaseMode() >> true
         buildConditionEvaluatorStub.isSnapshotVersion() >> true
         project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
     }

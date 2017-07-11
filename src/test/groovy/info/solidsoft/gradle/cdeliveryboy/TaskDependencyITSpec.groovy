@@ -20,22 +20,15 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
         project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
     }
 
-    def "should not prepare release if any of isInReleaseBranch (#isInReleaseBranch) or isReleaseTriggered (#isReleaseTriggered) is not fulfilled "() {
+    def "should not release if not in release mode"() {
         given:
-            buildConditionEvaluatorStub.isInReleaseBranch() >> isInReleaseBranch
-            buildConditionEvaluatorStub.isReleaseTriggered() >> isReleaseTriggered
-            buildConditionEvaluatorStub.isSnapshotVersion() >> true
+            buildConditionEvaluatorStub.isInReleaseMode() >> false
         and:
             project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
         and:
             Task ciBuildTask = getJustOneTaskByNameOrFail("prepareForCiBuild")
         expect:
-            getDependencyNamesForTask(ciBuildTask) == ["currentVersion"] as Set
             ciBuildTask.getMustRunAfter().getDependencies(ciBuildTask) == [] as Set
-        where:
-            isInReleaseBranch | isReleaseTriggered
-            false             | true
-            true              | false
     }
 
     def "should depend on createRelease task if in release branch and release triggered"() {
@@ -51,8 +44,7 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
 
     def "should put release tasks in order when in release mode with non snapshot version"() {
         given:
-            buildConditionEvaluatorStub.isInReleaseBranch() >> true
-            buildConditionEvaluatorStub.isReleaseTriggered() >> true
+            buildConditionEvaluatorStub.isInReleaseMode() >> true
             buildConditionEvaluatorStub.isSnapshotVersion() >> false
         and:
             project.gradle.startParameter.taskNames = ['ciBuild']
@@ -95,8 +87,7 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
 
     def "promotion task should be disabled in ciBuild if auto-promotion disabled in configuration"() {
         given:
-            buildConditionEvaluatorStub.isInReleaseBranch() >> true
-            buildConditionEvaluatorStub.isReleaseTriggered() >> true
+            buildConditionEvaluatorStub.isInReleaseMode() >> true
             buildConditionEvaluatorStub.isSnapshotVersion() >> false
             project.gradle.startParameter.taskNames = ['ciBuild']
         and:
@@ -159,8 +150,7 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
     }
 
     private void stubForReleaseWithSnapshot() {
-        buildConditionEvaluatorStub.isInReleaseBranch() >> true
-        buildConditionEvaluatorStub.isReleaseTriggered() >> true
+        buildConditionEvaluatorStub.isInReleaseMode() >> true
         buildConditionEvaluatorStub.isSnapshotVersion() >> true
         buildConditionEvaluatorStub.overriddenVersion() >> noVersionOverridden()
     }

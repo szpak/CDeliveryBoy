@@ -168,13 +168,13 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             ciBuildTask.dependsOn(taskConfig.buildProjectTask)
             if (buildConditionEvaluator.inReleaseBranch) {
                 ciBuildTask.dependsOn(taskConfig.uploadArchivesTask)   //TODO: Support skipping for snapshots if set in configuration
-                if (buildConditionEvaluator.inReleaseMode) {
-                    if (!buildConditionEvaluator.isSnapshotVersion()) {
-                        setDependantTasksForBuildTaskInReleaseMode(pluginConfig, taskConfig, ciBuildTask)
-                    } else {
-                        throw new BuildException("Release triggered, but still in snapshot version. " +
-                                "Has '$PREPARE_FOR_CI_BUILD_TASK_NAME' task been executed in separate Gradle call before?", null)
-                    }
+            }
+            if (buildConditionEvaluator.inReleaseMode) {
+                if (!buildConditionEvaluator.isSnapshotVersion()) {
+                    setDependantTasksForBuildTaskInReleaseMode(pluginConfig, taskConfig, ciBuildTask)
+                } else {
+                    throw new BuildException("Release triggered, but still in snapshot version. " +
+                            "Has '$PREPARE_FOR_CI_BUILD_TASK_NAME' task been executed in separate Gradle call before?", null)
                 }
             }
         } else {

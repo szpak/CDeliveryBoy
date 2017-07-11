@@ -48,6 +48,22 @@ class BuildConditionEvaluatorSpec extends Specification {
         ciVariablesConfig.commitMessageName >> TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME
     }
 
+    def "should not be in release mode if any of isInReleaseBranch (#isInReleaseBranch) or isReleaseTriggered (#isReleaseTriggered) is not fulfilled "() {
+        given:
+            environmentVariableReader.findByName(TEST_CI_IS_PR_NAME) >> isPrBuild
+            environmentVariableReader.findByName(TEST_CI_BRANCH_NAME) >> (isInReleaseBranch ? 'master' : 'someOther')
+            trigger.releaseOnDemand >> true
+            environmentVariableReader.findByName(TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME) >> TRIGGERING_COMMIT_MESSAGE
+        and:
+            environmentVariableReader.findByName(TEST_SKIP_RELEASE_VARIABLE_NAME) >> "false"
+        expect:
+            !buildConditionEvaluator.isInReleaseMode()
+        where:
+            isInReleaseBranch | isPrBuild | isReleaseTriggered
+            "false"             | "false"     | "true"
+            "true"              | "false"     | "false"
+    }
+
     def "should ignore commit message if releaseOnDemand is disabled"() {
         given:
             environmentVariableReader.findByName(TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME) >> NOT_TRIGGERING_COMMIT_MESSAGE
