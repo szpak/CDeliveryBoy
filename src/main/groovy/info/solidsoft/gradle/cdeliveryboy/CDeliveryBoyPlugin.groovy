@@ -145,8 +145,6 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             if (buildConditionEvaluator.inReleaseMode) {
                 releaseVersionDeterminer.determineAndOverrideReleaseVersionIfRequested(buildConditionEvaluator.overriddenVersion())
                 prepareTask.dependsOn(getJustOneTaskByNameOrFail(taskConfig.createReleaseTask))
-            } else {
-                prepareTask.dependsOn("currentVersion") //TODO: Move it somehow to configuration
             }
         } else {
             log.lifecycle("'${prepareTask.name}' task will not be executed") //TODO: Switch to info
