@@ -21,7 +21,7 @@ Milestone 2:
 
 Milestone X:
  ✔ release mockito-java8 with CDeliveryBoy
- - code cleanup
+ ! code cleanup
  ✔ finalize name and publish to GitHub
  ~ initial documentation
 
@@ -31,14 +31,14 @@ Milestone X+1:
    - support for disabled steps (with null value set)
  - quick start template - lazybones - https://github.com/pledbrook/lazybones?
  - up-to-date status - should be always not up-to-date?  If not, what parameters should be set as @Input (there are internally not used by tasks)?
- - provide requested version number in a commit message - workaround with artificial alpha tags exists
+ ✔ provide requested version number in a commit message - workaround with artificial alpha tags exists
  ✔ eat your own dog food
  ✔ support for SKIP_RELEASE for builds with different Java versions
  ✔ "Powered by CDeliveryBoy" banner by default in commit message
  ✔ rework configuration using subtypes
 
 Milestone X+2:
- - verify that Nexus repository has been really closed - https://github.com/Codearte/gradle-nexus-staging-plugin/issues/21
+ ✔ verify that Nexus repository has been really closed - https://github.com/Codearte/gradle-nexus-staging-plugin/issues/21
  - Rollback when possible?
    - e.g. dropRepository after pushRelease failed to not keep closed staging repository in Nexus
 
@@ -54,20 +54,20 @@ Other:
      - support for setting refSpec in Axion
        - add 'refsOrSpecs: HEAD:refs/heads/master' in https://github.com/allegro/axion-release-plugin/blob/1de6a06b4c1ff88291e039223820cc5a7c80b096/src/main/groovy/pl/allegro/tech/build/axion/release/infrastructure/git/GitRepository.groovy#L101-L103
          - also in a low level variant - http://stackoverflow.com/a/13451225/313516
-   - fix - 3 commits in Axion - https://github.com/allegro/axion-release-plugin/issues/132
+   ✔ fix - 3 commits in Axion - https://github.com/allegro/axion-release-plugin/issues/132
    - "git push --tags" is not atomic - fails with 1 when tag already exists, but leaves commit pushed - with Git 2.4+ it should be better, but it not :(
    ✔ "git -q push ... > /dev/null 2>&1" hides error messages - try to use "... 2>&1 | sed "s/$GH_TOKEN/xxx/g" to just remove a token - or output could be redirected (see Exec class) - DONE
-   - version is cached - project version assignment cannot be done in plugin - a separate flag for Axion to disable caching?
+   - version is cached - project version assignment cannot be done in plugin - a separate flag for Axion to disable caching? - spawn another Gradle process?
    - disable checks in preconfigured configuration - how to distinguish CI and manual release mode (if available)?
    - switch to annotated tags?
- - set username & email in plugin (via "git config" or only in Axion?) - PushOp allows to provide author and commiter, but it could break local release
+ - set username & email in plugin (via "git config" or only in Axion?) - CommitOp allows to provide author and committer, but Axion doesn't. Somehow problematic to add it to Axion
  - GPG
    - keep encrypted gpg keyring instead of importing decrypted key?
    - set signing properties in plugin
    - subkey with detached master
    - extract the only secret key for signing uid in bash to not have to provide it manually
  - nexus upload/staging
-   - verify that Nexus repository has been really closed - https://github.com/Codearte/gradle-nexus-staging-plugin/issues/21
+   ✔ verify that Nexus repository has been really closed - https://github.com/Codearte/gradle-nexus-staging-plugin/issues/21
    - always create new staging repository - instead of adding artifacts to already existing - rather issue with uploadArchives
    - generic nexus-plugin is not crucial - could be replaced with new maven-publish plugin - consider ability to disable its preconfiguration
 
@@ -78,7 +78,7 @@ Other:
  ✔ Who should apply other plugins? The plugin or people? Would it be possible to override plugin configuration by people in the first case?
  ✔ Should artifact upload be triggered automatically for everything in a release branch (also without a trigger command)? - rather only for snapshots
  ✘ Manual mode to release locally? - rather not needed - component tasks can be called separately, preconfiguration works unless explicitely disabled
- - Acceptance/functional tests with real project (drop instead of promote) on the plugin build on Travis
+ ! Acceptance/functional tests with real project (promote to fake repository like in nexus-at) on the plugin build on Travis
  ✔ Make (some) parameters set from a command line (like -PcDeliveryBoy.dryRun=true) - DONE - for selected parameters
    - Generalize mechanism - e.g. all fields in configuration with simple types via Groovy reflection
  - Animal Sniffer task to verify compatibility with Java 7
@@ -90,7 +90,7 @@ One day, maybe:
  - Publication comparison (like in Mockito)?
 
 Implementation details:
- - too much "new" operator in code - some context to simulate dependencies injection?
+ - too much "new" operator in code - some context to simulate dependencies injection? - uber context to mimic IoC?
  - shouldn't DefaultTaskConfig be an interface in CDeliveryBoyPluginConfig? Or maybe DryRunTaskConfig is not needed?
 
 
