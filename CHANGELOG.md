@@ -1,5 +1,9 @@
 # C(ontinuous)DeliveryBoy changelog
 
+## 0.7.0 - unreleased
+
+ - Display release conditions in more human friendly way - [#8](https://github.com/szpak/CDeliveryBoy/issues/8)
+
 ## 0.6.0 - 2017-07-04
 
  - Upgrade gradle-nexus-staging-plugin, Axion plugin and Spock
