@@ -17,11 +17,14 @@ import static OverriddenVersion.noVersionOverridden
 class BuildConditionEvaluatorSpec extends Specification {
 
     private static final String TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME = "TEST_COMMIT_MSG"
-    private static final String TEST_RELEASE_COMMAND = "TEST_RELEASE_COMMAND"
+    private static final String TEST_RELEASE_COMMAND = "[#TEST_DO_RELEASE]"
     private static final String NOT_TRIGGERING_COMMIT_MESSAGE = "any commit message"
     private static final String TRIGGERING_COMMIT_MESSAGE = TEST_RELEASE_COMMAND + " and more"
+    private static final String TRIGGERING_COMMIT_MESSAGE_WITH_VERSION = TEST_RELEASE_COMMAND + " [#0.5.0-over] and more"
     private static final String TEST_SKIP_RELEASE_VARIABLE_NAME = "TEST_SKIP_RELEASE"
     private static final String SOME_COMMIT_MESSAGE = "anyCommitMessage"
+    private static final String TEST_CI_BRANCH_NAME = "BRANCH_NAME_ENV"
+    private static final String TEST_CI_IS_PR_NAME = "IS_PR_ENV"
 
     private CiVariablesConfig ciVariablesConfig = Stub()
     private CDeliveryBoyPluginConfig pluginConfig = Stub()
@@ -107,5 +110,32 @@ class BuildConditionEvaluatorSpec extends Specification {
             buildConditionEvaluator.overriddenVersion() == overriddenVersion
         where:
             overriddenVersion << [overriddenVersionWithValue("0.5.0"), noVersionOverridden()]
+    }
+
+    def "should display conditions in human-friendly way"() {
+        given:
+            ciVariablesConfig.branchNameName >> TEST_CI_BRANCH_NAME
+            environmentVariableReader.findByName(TEST_CI_BRANCH_NAME) >> "master"
+            ciVariablesConfig.isPrName >> TEST_CI_IS_PR_NAME
+            environmentVariableReader.findByName(TEST_CI_IS_PR_NAME) >> false
+            trigger.releaseOnDemand >> true
+            projectConfig.version >> "0.3.2-SNAPSHOT"
+            environmentVariableReader.findByName(TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME) >> TRIGGERING_COMMIT_MESSAGE_WITH_VERSION
+            overriddenVersionDeterminer.findOverriddenVersionInCommitMessageIfProvided(TRIGGERING_COMMIT_MESSAGE_WITH_VERSION) >>
+                    overriddenVersionWithValue("0.5.0-over")
+        expect:
+            buildConditionEvaluator.getReleaseConditionsAsString() == """
+In release mode: true
+  - in release branch: true
+    - configured: 'master', actual: 'master'
+    - not PR build: true
+  - release triggered: true
+    - not skipped by env variable ('TEST_SKIP_RELEASE'): true
+    - release on demand required: true
+    - release on demand triggered ('[#TEST_DO_RELEASE]'): true
+  - is SNAPSHOT: true
+  - current version: '0.3.2-SNAPSHOT'
+  - overridden version: '0.5.0-over'
+"""
     }
 }

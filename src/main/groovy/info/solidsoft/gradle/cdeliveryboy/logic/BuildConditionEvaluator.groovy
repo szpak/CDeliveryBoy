@@ -25,17 +25,37 @@ class BuildConditionEvaluator {
         this.overriddenVersionDeterminer = overriddenVersionDeterminer
     }
 
-    boolean isInReleaseBranch() {
-        return environmentVariableReader.findByName(ciConfig.isPrName) == "false" &&
-                environmentVariableReader.findByName(ciConfig.branchNameName) == pluginConfig.git.releaseBranch
+    boolean isInReleaseMode() {
+        return isInReleaseBranch() && isReleaseTriggered()
     }
 
-    boolean isReleaseTriggered() {
-        if (environmentVariableReader.findByName(pluginConfig.trigger.skipReleaseVariableName) == "true") {
+    boolean isInReleaseBranch() {   //TODO: make private
+        return !isPrBuild() &&
+                getActualBranchName() == pluginConfig.git.releaseBranch
+    }
+
+    private String getActualBranchName() {
+        return environmentVariableReader.findByName(ciConfig.branchNameName)
+    }
+
+    private boolean isPrBuild() {
+        return environmentVariableReader.findByName(ciConfig.isPrName) != "false"
+    }
+
+    private boolean isReleaseTriggered() {
+        if (isSkippedByEnvVariable()) {
             return false
         }
         return !pluginConfig.trigger.releaseOnDemand ||
-                environmentVariableReader.findByName(ciConfig.commitMessageName)?.contains(pluginConfig.trigger.onDemandReleaseTriggerCommand)
+                isReleaseOnDemandTriggered()
+    }
+
+    private boolean isSkippedByEnvVariable() {
+        return environmentVariableReader.findByName(pluginConfig.trigger.skipReleaseVariableName) == "true"
+    }
+
+    private boolean isReleaseOnDemandTriggered() {
+        return environmentVariableReader.findByName(ciConfig.commitMessageName)?.contains(pluginConfig.trigger.onDemandReleaseTriggerCommand)
     }
 
     boolean isSnapshotVersion() {
@@ -52,6 +72,23 @@ class BuildConditionEvaluator {
     }
 
     String getReleaseConditionsAsString() {
+        return """
+In release mode: ${isInReleaseMode()}
+  - in release branch: ${isInReleaseBranch()}
+    - configured: '${pluginConfig.git.releaseBranch}', actual: '${getActualBranchName()}'
+    - not PR build: ${!isPrBuild()}
+  - release triggered: ${isReleaseTriggered()}
+    - not skipped by env variable ('${pluginConfig.trigger.skipReleaseVariableName}'): ${!isSkippedByEnvVariable()}
+    - release on demand required: ${pluginConfig.trigger.releaseOnDemand}
+    - release on demand triggered ('${pluginConfig.trigger.onDemandReleaseTriggerCommand}'): ${isReleaseOnDemandTriggered()}
+  - is SNAPSHOT: ${isSnapshotVersion()}
+  - current version: '${projectConfig.version}'
+  - overridden version: '${overriddenVersion().isOverridden ? overriddenVersion().overriddenValue : "none"}'
+"""
+    }
+
+    @Deprecated
+    String getReleaseConditionsAsStringOld() {
         //TODO: Maybe on lifecycle display only not satisfied conditions (how to do it in a clearly way)?
         return "Branch name: ${environmentVariableReader.findByName(ciConfig.branchNameName)} (configured: ${pluginConfig.git.releaseBranch}), " +
                 "is PR: ${environmentVariableReader.findByName(ciConfig.isPrName)}, " +
