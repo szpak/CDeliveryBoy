@@ -18,7 +18,7 @@ before_install:
 
 install: true
 script:
- - ./gradlew prepareForCiBuild -s -i -Prelease.disableChecks && ./gradlew ciBuild -s -i -Prelease.disableChecks -PpluginPortal -PchangelogSync
+ - ./gradlew prepareForCiBuild -s -i && ./gradlew ciBuild -s -i -PpluginPortal -PchangelogSync
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
