@@ -14,11 +14,17 @@ class CDeliveryBoyCiBuildTask extends ConventionTask {
     private static Logger log = Logging.getLogger(MethodHandles.lookup().lookupClass())
 
     //TODO: Manage inputs/outputs and up-to-date state
-    boolean isInReleaseMode = false
+    boolean inReleaseMode = false
     String modeConditions
 
     @TaskAction
     void displayReleaseModeConditionsAsEverythingElseShouldBeAlreadyDoneInDependantTasks() {
         log.lifecycle(modeConditions)
+    }
+
+    @Deprecated
+    boolean getIsInReleaseMode() {
+        log.warn("DEPRECATION WARNING. 'isInReleaseMode' property is deprecated. Use 'inReleaseMode'")
+        return inReleaseMode
     }
 }

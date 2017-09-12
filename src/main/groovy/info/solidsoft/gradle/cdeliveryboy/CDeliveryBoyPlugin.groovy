@@ -141,7 +141,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         if (isGivenTaskExpectedToBeExecuted(prepareTask)) {
             ciVariablesValidator.checkExistence()
             prepareTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
-            prepareTask.isInReleaseMode = buildConditionEvaluator.inReleaseMode
+            prepareTask.inReleaseMode = buildConditionEvaluator.inReleaseMode
 
             if (buildConditionEvaluator.inReleaseMode) {
                 releaseVersionDeterminer.determineAndOverrideReleaseVersionIfRequested(buildConditionEvaluator.overriddenVersion())
@@ -165,7 +165,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         if (isGivenTaskExpectedToBeExecuted(ciBuildTask)) {
             ciVariablesValidator.checkExistence()
             ciBuildTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
-            ciBuildTask.isInReleaseMode = buildConditionEvaluator.inReleaseMode
+            ciBuildTask.inReleaseMode = buildConditionEvaluator.inReleaseMode
 
             ciBuildTask.dependsOn(taskConfig.buildProjectTask)
             if (buildConditionEvaluator.inReleaseBranch) {
