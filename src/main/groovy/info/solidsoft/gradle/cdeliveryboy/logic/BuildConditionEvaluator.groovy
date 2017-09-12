@@ -73,18 +73,22 @@ class BuildConditionEvaluator {
 
     String getReleaseConditionsAsString() {
         return """
-In release mode: ${isInReleaseMode()}
-  - in release branch: ${isInReleaseBranch()}
-    - configured: '${pluginConfig.git.releaseBranch}', actual: '${getActualBranchName()}'
-    - not PR build: ${!isPrBuild()}
-  - release triggered: ${isReleaseTriggered()}
-    - not skipped by env variable ('${pluginConfig.trigger.skipReleaseVariableName}'): ${!isSkippedByEnvVariable()}
-    - release on demand required: ${pluginConfig.trigger.releaseOnDemand}
-    - release on demand triggered ('${pluginConfig.trigger.onDemandReleaseTriggerCommand}'): ${isReleaseOnDemandTriggered()}
-  - is SNAPSHOT: ${isSnapshotVersion()}
+${f isInReleaseMode()} IN RELEASE MODE
+  ${f isInReleaseBranch()} in release branch
+    ${f pluginConfig.git.releaseBranch == getActualBranchName()} configured: '${pluginConfig.git.releaseBranch}', actual: '${getActualBranchName()}'
+    ${f !isPrBuild()} not PR build
+  ${f isReleaseTriggered()} release triggered
+    ${f !isSkippedByEnvVariable()} not skipped by env variable ('${pluginConfig.trigger.skipReleaseVariableName}')
+    ${f pluginConfig.trigger.releaseOnDemand} release on demand required
+    ${f isReleaseOnDemandTriggered()} release on demand triggered ('${pluginConfig.trigger.onDemandReleaseTriggerCommand}')
+  ${f isSnapshotVersion()} is SNAPSHOT
   - current version: '${projectConfig.version}'
   - overridden version: '${overriddenVersion().isOverridden ? overriddenVersion().overriddenValue : "none"}'
 """
+    }
+
+    private f(boolean booleanToFormat) {
+        return booleanToFormat ? "✔" : "✘"
     }
 
     @Deprecated

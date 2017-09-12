@@ -133,7 +133,7 @@ class BuildConditionEvaluatorSpec extends Specification {
             ciVariablesConfig.branchNameName >> TEST_CI_BRANCH_NAME
             environmentVariableReader.findByName(TEST_CI_BRANCH_NAME) >> "master"
             ciVariablesConfig.isPrName >> TEST_CI_IS_PR_NAME
-            environmentVariableReader.findByName(TEST_CI_IS_PR_NAME) >> false
+            environmentVariableReader.findByName(TEST_CI_IS_PR_NAME) >> true
             trigger.releaseOnDemand >> true
             projectConfig.version >> "0.3.2-SNAPSHOT"
             environmentVariableReader.findByName(TEST_CI_COMMIT_MESSAGE_VARIABLE_NAME) >> TRIGGERING_COMMIT_MESSAGE_WITH_VERSION
@@ -141,15 +141,15 @@ class BuildConditionEvaluatorSpec extends Specification {
                     overriddenVersionWithValue("0.5.0-over")
         expect:
             buildConditionEvaluator.getReleaseConditionsAsString() == """
-In release mode: true
-  - in release branch: true
-    - configured: 'master', actual: 'master'
-    - not PR build: true
-  - release triggered: true
-    - not skipped by env variable ('TEST_SKIP_RELEASE'): true
-    - release on demand required: true
-    - release on demand triggered ('[#TEST_DO_RELEASE]'): true
-  - is SNAPSHOT: true
+✘ IN RELEASE MODE
+  ✘ in release branch
+    ✔ configured: 'master', actual: 'master'
+    ✘ not PR build
+  ✔ release triggered
+    ✔ not skipped by env variable ('TEST_SKIP_RELEASE')
+    ✔ release on demand required
+    ✔ release on demand triggered ('[#TEST_DO_RELEASE]')
+  ✔ is SNAPSHOT
   - current version: '0.3.2-SNAPSHOT'
   - overridden version: '0.5.0-over'
 """
