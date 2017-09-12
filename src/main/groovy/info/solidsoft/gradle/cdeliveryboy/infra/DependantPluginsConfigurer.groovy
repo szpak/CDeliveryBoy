@@ -54,7 +54,9 @@ class DependantPluginsConfigurer {
                 versionSeparator = '/'
             }
             versionIncrementer('incrementMinor')
-            //TODO: Disable checks and other stuff required by Travis
+            checks {
+                aheadOfRemote = false   //Travis works on detached branches
+            }
         }
         schedulePreReleaseCommitAddition(axionConfig)
         //Note: 'project.version = project.scmVersion.version' cannot be used due to version caching in Axion
