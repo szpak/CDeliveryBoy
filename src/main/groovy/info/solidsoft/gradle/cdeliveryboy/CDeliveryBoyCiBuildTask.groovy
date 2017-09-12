@@ -13,6 +13,8 @@ class CDeliveryBoyCiBuildTask extends ConventionTask {
 
     private static Logger log = Logging.getLogger(MethodHandles.lookup().lookupClass())
 
+    //TODO: Manage inputs/outputs and up-to-date state
+    boolean isInReleaseMode = false
     String modeConditions
 
     @TaskAction

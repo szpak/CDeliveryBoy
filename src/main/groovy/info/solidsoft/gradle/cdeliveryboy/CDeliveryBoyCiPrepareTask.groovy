@@ -17,6 +17,8 @@ class CDeliveryBoyCiPrepareTask extends ConventionTask {
     @Input
     String releaseBranch
 
+    //TODO: Manage inputs/outputs and up-to-date state
+    boolean isInReleaseMode = false
     String modeConditions
 
     @TaskAction
