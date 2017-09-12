@@ -1,7 +1,7 @@
 sudo: false
 language: groovy
 jdk:
-  - oraclejdk7
+  - oraclejdk8
 
 before_install:
  - openssl aes-256-cbc -K $encrypted_3550fc1d8ba6_key -iv $encrypted_3550fc1d8ba6_iv
