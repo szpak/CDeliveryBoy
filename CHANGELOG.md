@@ -1,6 +1,6 @@
 # C(ontinuous)DeliveryBoy changelog
 
-## 0.7.0 - Unreleased
+## 0.7.0 - 2017-09-12
 
  - Display release conditions in more human friendly way - [#8](https://github.com/szpak/CDeliveryBoy/issues/8)
  - Disable remote branch validation by default - Travis works on detached branches
