@@ -1,6 +1,6 @@
 # C(ontinuous)DeliveryBoy changelog
 
-## 0.7.0 - unreleased
+## 0.7.0 - Unreleased
 
  - Display release conditions in more human friendly way - [#8](https://github.com/szpak/CDeliveryBoy/issues/8)
 
