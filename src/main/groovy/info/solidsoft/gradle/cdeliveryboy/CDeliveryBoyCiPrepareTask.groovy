@@ -22,10 +22,7 @@ class CDeliveryBoyCiPrepareTask extends ConventionTask {
     String modeConditions
 
     @TaskAction
-    void prepare() {
+    void displayReleaseModeConditionsAsEverythingElseShouldBeAlreadyDoneInDependantTasks() {
         log.lifecycle(modeConditions)
-
-        //TODO: Can be set as up-to-date during execution?
-        //      'this.outputs.upToDateWhen { ??? }' - when it is called?
     }
 }

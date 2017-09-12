@@ -141,9 +141,9 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         if (isGivenTaskExpectedToBeExecuted(prepareTask)) {
             ciVariablesValidator.checkExistence()
             prepareTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
+            prepareTask.isInReleaseMode = buildConditionEvaluator.inReleaseMode
 
             if (buildConditionEvaluator.inReleaseMode) {
-                prepareTask.isInReleaseMode = true
                 releaseVersionDeterminer.determineAndOverrideReleaseVersionIfRequested(buildConditionEvaluator.overriddenVersion())
                 prepareTask.dependsOn(getJustOneTaskByNameOrFail(taskConfig.createReleaseTask))
             }
@@ -165,13 +165,13 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         if (isGivenTaskExpectedToBeExecuted(ciBuildTask)) {
             ciVariablesValidator.checkExistence()
             ciBuildTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
+            ciBuildTask.isInReleaseMode = buildConditionEvaluator.inReleaseMode
 
             ciBuildTask.dependsOn(taskConfig.buildProjectTask)
             if (buildConditionEvaluator.inReleaseBranch) {
                 ciBuildTask.dependsOn(taskConfig.uploadArchivesTask)   //TODO: Support skipping for snapshots if set in configuration
             }
             if (buildConditionEvaluator.inReleaseMode) {
-                ciBuildTask.isInReleaseMode = true
                 if (!buildConditionEvaluator.isSnapshotVersion()) {
                     setDependantTasksForBuildTaskInReleaseMode(pluginConfig, taskConfig, ciBuildTask)
                 } else {

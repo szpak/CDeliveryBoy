@@ -18,7 +18,7 @@ class CDeliveryBoyCiBuildTask extends ConventionTask {
     String modeConditions
 
     @TaskAction
-    void doSomethingBetterNameNeeded() {
+    void displayReleaseModeConditionsAsEverythingElseShouldBeAlreadyDoneInDependantTasks() {
         log.lifecycle(modeConditions)
     }
 }
