@@ -31,8 +31,10 @@ nexusStaging {
 
 scmVersion {
     hooks {
-        pre 'fileUpdate', [file: 'README.md', pattern: {v, p -> /'info\.solidsoft\.gradle:cdeliveryboy:.*'/},
-                           replacement: {v, p -> "'info.solidsoft.gradle:cdeliveryboy:$v'"}]
+        pre 'fileUpdate', [file       : 'README.md', pattern: { previousVersion, context -> /classpath\ 'info\.solidsoft\.gradle:cdeliveryboy:$previousVersion'/ },
+                           replacement: { currentVersion, context -> "classpath 'info.solidsoft.gradle:cdeliveryboy:$currentVersion'" }]
+        pre 'fileUpdate', [file       : 'CHANGELOG.md', pattern: { previousVersion, context -> /^##\ ${context.currentVersion}\ -\ Unreleased$/ },
+                           replacement: { currentVersion, context -> "## $currentVersion - ${new Date().format( 'yyyy-MM-dd' )}" }]
     }
 }
 
