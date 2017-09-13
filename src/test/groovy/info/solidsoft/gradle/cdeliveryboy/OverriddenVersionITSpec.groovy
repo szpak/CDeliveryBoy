@@ -25,7 +25,7 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
         buildConditionEvaluatorStub.overriddenVersion() >> noVersionOverridden()
         buildConditionEvaluatorStub.isInReleaseMode() >> true
         buildConditionEvaluatorStub.isSnapshotVersion() >> true
-        project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
+        contextSpy.getBuildConditionEvaluator() >> buildConditionEvaluatorStub
     }
 
     def "should increase minor version by default"() {

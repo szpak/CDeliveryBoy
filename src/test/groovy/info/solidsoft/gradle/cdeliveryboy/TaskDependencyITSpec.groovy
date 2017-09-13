@@ -17,7 +17,7 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
 
     def setup() {
         buildConditionEvaluatorStub = Stub()
-        project.plugins.getPlugin(CDeliveryBoyPlugin).buildConditionEvaluatorIntegrationTestingHack = buildConditionEvaluatorStub
+        contextSpy.getBuildConditionEvaluator() >> buildConditionEvaluatorStub
     }
 
     def "should not release if not in release mode"() {
