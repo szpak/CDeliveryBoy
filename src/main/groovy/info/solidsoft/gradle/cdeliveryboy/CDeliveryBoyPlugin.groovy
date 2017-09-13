@@ -35,7 +35,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
 
     private Project project //???
 
-    private IocContext iocContext   //as a field to make it modifiable in integration tests through enhanceOrReplaceContextHack
+    private IocContext iocContext   //as a field to make it modifiable in integration tests through enhanceOrReplaceContextHackForIntegrationTesting
 
     @Override
     void apply(Project project) {
@@ -202,7 +202,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         }
     }
 
-    private enhanceOrReplaceContextHack(@DelegatesTo(IocContext) Closure<IocContext> f) {   //Function is not available in Java 7
+    private enhanceOrReplaceContextHackForIntegrationTesting(@DelegatesTo(IocContext) Closure<IocContext> f) {   //Function interface is not available in Java 7
         iocContext = f.call(iocContext)
     }
 }

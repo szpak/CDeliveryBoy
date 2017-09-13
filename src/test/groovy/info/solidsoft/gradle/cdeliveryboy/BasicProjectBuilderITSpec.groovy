@@ -35,7 +35,7 @@ abstract class BasicProjectBuilderITSpec extends Specification implements TaskFi
     }
 
     private IocContext createRealContextSpyReplaceInPluginAndSetFieldInTest() {
-        return getCDeliveryBoyPluginInstance().enhanceOrReplaceContextHack { IocContext contextInPlugin ->
+        return getCDeliveryBoyPluginInstance().enhanceOrReplaceContextHackForIntegrationTesting { IocContext contextInPlugin ->
             contextSpy = (ManualIocContext) Spy(contextInPlugin) //casting to instruct Spock to create spy for ManualIoCContext not just IocContext interface
             return contextSpy
         }
