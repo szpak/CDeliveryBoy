@@ -1,8 +1,8 @@
 package info.solidsoft.gradle.cdeliveryboy
 
 import groovy.transform.PackageScope
-import info.solidsoft.gradle.cdeliveryboy.infra.IocContext
-import info.solidsoft.gradle.cdeliveryboy.infra.ManualIocContext
+import info.solidsoft.gradle.cdeliveryboy.infra.ioc.IocContext
+import info.solidsoft.gradle.cdeliveryboy.infra.ioc.ManualIocContext
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.DryRunTaskConfig

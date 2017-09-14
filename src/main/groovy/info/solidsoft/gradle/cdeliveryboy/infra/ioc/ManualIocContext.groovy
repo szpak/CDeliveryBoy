@@ -1,6 +1,12 @@
-package info.solidsoft.gradle.cdeliveryboy.infra
+package info.solidsoft.gradle.cdeliveryboy.infra.ioc
 
 import groovy.transform.CompileStatic
+import info.solidsoft.gradle.cdeliveryboy.infra.AxionReleaseVersionOverrider
+import info.solidsoft.gradle.cdeliveryboy.infra.EnvironmentVariableReader
+import info.solidsoft.gradle.cdeliveryboy.infra.OverriddenVersionInCommitMessageFinder
+import info.solidsoft.gradle.cdeliveryboy.infra.ProjectPropertyReader
+import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
+import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
 import info.solidsoft.gradle.cdeliveryboy.infra.config.DefaultProjectConfig
 import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskDependencer
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator

@@ -3,8 +3,8 @@ package info.solidsoft.gradle.cdeliveryboy
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import info.solidsoft.gradle.cdeliveryboy.infra.DependantPluginsConfigurer
-import info.solidsoft.gradle.cdeliveryboy.infra.IocContext
-import info.solidsoft.gradle.cdeliveryboy.infra.ManualIocContext
+import info.solidsoft.gradle.cdeliveryboy.infra.ioc.IocContext
+import info.solidsoft.gradle.cdeliveryboy.infra.ioc.ManualIocContext
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig

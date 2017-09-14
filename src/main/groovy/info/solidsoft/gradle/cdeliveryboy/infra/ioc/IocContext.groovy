@@ -1,5 +1,7 @@
-package info.solidsoft.gradle.cdeliveryboy.infra
+package info.solidsoft.gradle.cdeliveryboy.infra.ioc
 
+import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
+import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
 import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskDependencer
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
