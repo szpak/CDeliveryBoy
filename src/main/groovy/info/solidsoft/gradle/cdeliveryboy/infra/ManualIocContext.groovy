@@ -2,6 +2,7 @@ package info.solidsoft.gradle.cdeliveryboy.infra
 
 import groovy.transform.CompileStatic
 import info.solidsoft.gradle.cdeliveryboy.infra.config.DefaultProjectConfig
+import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskDependencer
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
@@ -28,6 +29,8 @@ class ManualIocContext implements IocContext {
     private CiVariablesValidator ciVariablesValidator
     private ReleaseVersionDeterminer releaseVersionDeterminer
 
+    private PrepareForCiBuildTaskDependencer prepareForCiBuildTaskDependencer
+
     ManualIocContext() {    //TODO: Remove it when https://github.com/spockframework/spock/issues/769 is fixed
         this(null, null)
     }
@@ -37,9 +40,12 @@ class ManualIocContext implements IocContext {
         this.pluginConfig = pluginConfig
     }
 
+    /**
+     * Implementation note. To make stubbing work in integration tests, even for internal calls getters have to be used instead of fields.
+     */
     void initialize() {
         propertyOverrider = new PropertyOverrider(new ProjectPropertyReader(project))
-        propertyOverrider.applyCommandLineProperties(pluginConfig)
+        getPropertyOverrider().applyCommandLineProperties(pluginConfig)
 
         taskConfig = createTaskConfigOrFail(pluginConfig) //TODO: Make it a part of public configuration?
         ciVariablesConfig = createCiVariablesConfigOrFail(pluginConfig)
@@ -47,10 +53,13 @@ class ManualIocContext implements IocContext {
         envVariableReader = new EnvironmentVariableReader()
         ProjectConfig projectConfig = new DefaultProjectConfig(project)
         OverriddenVersionInCommitMessageFinder overriddenVersionDeterminer = new OverriddenVersionInCommitMessageFinder()
-        buildConditionEvaluator = new BuildConditionEvaluator(ciVariablesConfig, pluginConfig, envVariableReader, projectConfig,
+        buildConditionEvaluator = new BuildConditionEvaluator(getCiVariablesConfig(), pluginConfig, getEnvVariableReader(), projectConfig,
                 overriddenVersionDeterminer)
-        ciVariablesValidator = new CiVariablesValidator(envVariableReader, ciVariablesConfig)
+        ciVariablesValidator = new CiVariablesValidator(getEnvVariableReader(), getCiVariablesConfig())
         releaseVersionDeterminer = new ReleaseVersionDeterminer(AxionReleaseVersionOverrider.forProject(project))
+
+        prepareForCiBuildTaskDependencer = new PrepareForCiBuildTaskDependencer(project, getTaskConfig(), getBuildConditionEvaluator(),
+                getCiVariablesValidator(), getReleaseVersionDeterminer())
     }
 
     private TaskConfig createTaskConfigOrFail(CDeliveryBoyPluginConfig pluginConfig) {
@@ -97,5 +106,10 @@ class ManualIocContext implements IocContext {
     @Override
     ReleaseVersionDeterminer getReleaseVersionDeterminer() {
         return releaseVersionDeterminer
+    }
+
+    @Override
+    PrepareForCiBuildTaskDependencer getPrepareForCiBuildTaskDependencer() {
+        return prepareForCiBuildTaskDependencer
     }
 }

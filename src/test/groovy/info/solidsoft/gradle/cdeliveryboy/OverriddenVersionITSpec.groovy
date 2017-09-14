@@ -9,6 +9,7 @@ import spock.lang.PendingFeature
 
 import static info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion.overriddenVersionWithValue
 import static info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion.noVersionOverridden
+import static org.mockito.BDDMockito.given
 
 class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
 
@@ -25,7 +26,7 @@ class OverriddenVersionITSpec extends BasicProjectBuilderITSpec {
         buildConditionEvaluatorStub.overriddenVersion() >> noVersionOverridden()
         buildConditionEvaluatorStub.isInReleaseMode() >> true
         buildConditionEvaluatorStub.isSnapshotVersion() >> true
-        contextSpy.getBuildConditionEvaluator() >> buildConditionEvaluatorStub
+        given(contextSpy.getBuildConditionEvaluator()).willReturn(buildConditionEvaluatorStub)
     }
 
     def "should increase minor version by default"() {

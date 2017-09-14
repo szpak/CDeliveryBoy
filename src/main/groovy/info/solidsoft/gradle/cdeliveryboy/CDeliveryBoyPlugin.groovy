@@ -6,7 +6,6 @@ import info.solidsoft.gradle.cdeliveryboy.infra.DependantPluginsConfigurer
 import info.solidsoft.gradle.cdeliveryboy.infra.IocContext
 import info.solidsoft.gradle.cdeliveryboy.infra.ManualIocContext
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
-import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -21,17 +20,9 @@ import org.gradle.tooling.BuildException
 
 @CompileStatic
 @SuppressWarnings("GrMethodMayBeStatic")
-class CDeliveryBoyPlugin implements Plugin<Project> {
+class CDeliveryBoyPlugin implements Plugin<Project>, CDeliveryBoyPluginConstants {
 
     private static Logger log = Logging.getLogger(CDeliveryBoyPlugin)
-
-    public static final String EXTENSION_NAME = "cDeliveryBoy"
-
-    private static final String PREPARE_FOR_CI_BUILD_TASK_NAME = "prepareForCiBuild"
-    private static final String CI_BUILD_TASK_NAME = "ciBuild"
-    private static final String PUSH_RELEASE2_TASK_NAME = "pushRelease2"
-
-    private static final String RELEASE_TASKS_GROUP_NAME = "release"
 
     private Project project //???
 
@@ -43,14 +34,15 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
 
         //TODO: Casting is required due to: https://issues.apache.org/jira/browse/GROOVY-7907 - fixed in Groovy 2.4.8
         CDeliveryBoyPluginConfig pluginConfig = (CDeliveryBoyPluginConfig) project.extensions.create(EXTENSION_NAME, CDeliveryBoyPluginConfig) //TODO: one or more extensions?
-        //TODO: It would be better to create placeholder/dummy tasks with given name on demand (e.g. for testing and reporting)
-        CDeliveryBoyCiPrepareTask prepareTask = createPrepareForCiBuildTask(project) //One method to create and configure?
-        configurePrepareTask(prepareTask, pluginConfig)
+
+        PrepareForCiBuildTaskInstantiator instantiator = new PrepareForCiBuildTaskInstantiator(project, pluginConfig)
+        CDeliveryBoyCiPrepareTask prepareTask = instantiator.createAndConfigureAndReturn()
+
         CDeliveryBoyCiBuildTask buildTask = createCiBuildTasks(project)
         configureBuildTask(buildTask, pluginConfig)
         PushRelease2Task pushRelease2Task = createPushRelease2Task(project)
 
-        new DependantPluginsConfigurer(project).applyAndPreconfigureIfNeeded()  //TODO: Not in context as it's to early
+        new DependantPluginsConfigurer(project).applyAndPreconfigureIfNeeded()  //Not in context as it's to early
 
         iocContext = new ManualIocContext(project, pluginConfig)
 
@@ -59,7 +51,7 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             iocContext.initialize()
             iocContext.with {
                 propertyOverrider.applyCommandLineProperties(pluginConfig)
-                setDependantTasksForPrepareTask(prepareTask, taskConfig, buildConditionEvaluator, ciVariablesValidator, releaseVersionDeterminer)   //TODO: Maybe create some common object to keep plugin configuration?
+                prepareForCiBuildTaskDependencer.orchestrateDependantTasks(prepareTask)
                 setDependantTasksForBuildTask(pluginConfig, buildTask, taskConfig, buildConditionEvaluator, ciVariablesValidator)
                 configurePushRelease2Task(pushRelease2Task, pluginConfig, ciVariablesConfig, envVariableReader)
             }
@@ -74,14 +66,6 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         }
     }
 
-    private CDeliveryBoyCiPrepareTask createPrepareForCiBuildTask(Project project) {
-        return project.tasks.create(PREPARE_FOR_CI_BUILD_TASK_NAME, CDeliveryBoyCiPrepareTask).with {
-            description = "Prepares for CI build with optional release"
-            group = RELEASE_TASKS_GROUP_NAME
-            return it
-        }
-    }
-
     private PushRelease2Task createPushRelease2Task(Project project) {
         return project.tasks.create(PUSH_RELEASE2_TASK_NAME, PushRelease2Task).with {
             description = "Performs second stage of release - pushes tag to remote (workaround on Axion limitation with refspec)"
@@ -90,23 +74,6 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
         }
     }
 
-    private void setDependantTasksForPrepareTask(CDeliveryBoyCiPrepareTask prepareTask, TaskConfig taskConfig,
-                                                 BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator,
-                                                 ReleaseVersionDeterminer releaseVersionDeterminer) {
-
-        if (isGivenTaskExpectedToBeExecuted(prepareTask)) {
-            ciVariablesValidator.checkExistence()
-            prepareTask.modeConditions = buildConditionEvaluator.releaseConditionsAsString
-            prepareTask.inReleaseMode = buildConditionEvaluator.inReleaseMode
-
-            if (buildConditionEvaluator.inReleaseMode) {
-                releaseVersionDeterminer.determineAndOverrideReleaseVersionIfRequested(buildConditionEvaluator.overriddenVersion())
-                prepareTask.dependsOn(getJustOneTaskByNameOrFail(taskConfig.createReleaseTask))
-            }
-        } else {
-            log.lifecycle("'${prepareTask.name}' task will not be executed") //TODO: Switch to info
-        }
-    }
 
     private boolean isGivenTaskExpectedToBeExecuted(Task taskToChecked) {
         //Task graph would be more reliable, but it's available only after afterEvaluate phrase (in addition it's problematic to test with ProjectBuilder)
@@ -176,14 +143,6 @@ class CDeliveryBoyPlugin implements Plugin<Project> {
             throw new BuildException("Expected exactly 1 task with name $taskName. Found ${tasksByName.size()}: '${tasksByName*.name}'", null)
         }
         return tasksByName.first()
-    }
-
-    @CompileDynamic
-    private Closure<String> configurePrepareTask(CDeliveryBoyCiPrepareTask prepareTask, CDeliveryBoyPluginConfig pluginConfig) {
-        prepareTask.conventionMapping.with {
-            ciType = { pluginConfig.ciType }
-            releaseBranch = { pluginConfig.git.releaseBranch }
-        }
     }
 
     @CompileDynamic

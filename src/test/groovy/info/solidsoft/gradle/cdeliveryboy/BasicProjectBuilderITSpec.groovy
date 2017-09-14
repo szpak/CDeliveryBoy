@@ -10,7 +10,10 @@ import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.mockito.Mockito
 import spock.lang.Specification
+
+import static org.mockito.BDDMockito.given
 
 @PackageScope
 abstract class BasicProjectBuilderITSpec extends Specification implements TaskFixtureTrait, ProjectAware, TaskTestTrait {
@@ -36,7 +39,11 @@ abstract class BasicProjectBuilderITSpec extends Specification implements TaskFi
 
     private IocContext createRealContextSpyReplaceInPluginAndSetFieldInTest() {
         return getCDeliveryBoyPluginInstance().enhanceOrReplaceContextHackForIntegrationTesting { IocContext contextInPlugin ->
-            contextSpy = (ManualIocContext) Spy(contextInPlugin) //casting to instruct Spock to create spy for ManualIoCContext not just IocContext interface
+            //BEWARE! It's Mockito's spy not Spock one. It's due to Spock limitation related to spying on externally created objects.
+            //        Without that internal getters calls could not be stubbed which was needed for among others PrepareForCiBuildTaskDependencer
+            //        creation.
+            //TODO: Replace with Spock's spy once https://github.com/spockframework/spock/issues/771 is implemented
+            contextSpy = Mockito.spy((ManualIocContext)contextInPlugin) //casting to instruct Spock to create spy for ManualIoCContext not just IocContext interface
             return contextSpy
         }
     }
@@ -49,7 +56,7 @@ abstract class BasicProjectBuilderITSpec extends Specification implements TaskFi
 
     private void configurePasswordEnvironmentValidation() {
         CiVariablesValidator ciVariablesValidatorAllOkStub = Stub()
-        contextSpy.getCiVariablesValidator() >> ciVariablesValidatorAllOkStub
+        given(contextSpy.getCiVariablesValidator()).willReturn(ciVariablesValidatorAllOkStub)
     }
 
     private CDeliveryBoyPlugin getCDeliveryBoyPluginInstance() {

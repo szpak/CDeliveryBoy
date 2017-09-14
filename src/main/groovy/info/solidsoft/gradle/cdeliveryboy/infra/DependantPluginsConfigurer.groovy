@@ -6,7 +6,7 @@ import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import org.gradle.api.Project
 import pl.allegro.tech.build.axion.release.domain.VersionConfig
 
-import static info.solidsoft.gradle.cdeliveryboy.CDeliveryBoyPlugin.EXTENSION_NAME
+import static info.solidsoft.gradle.cdeliveryboy.CDeliveryBoyPluginConstants.EXTENSION_NAME
 
 @CompileStatic
 class DependantPluginsConfigurer {

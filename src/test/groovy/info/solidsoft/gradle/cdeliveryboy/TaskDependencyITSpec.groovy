@@ -9,6 +9,7 @@ import org.gradle.tooling.BuildException
 import spock.util.Exceptions
 
 import static info.solidsoft.gradle.cdeliveryboy.logic.OverriddenVersion.noVersionOverridden
+import static org.mockito.BDDMockito.given
 
 @SuppressWarnings("GrMethodMayBeStatic")
 class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
@@ -17,7 +18,7 @@ class TaskDependencyITSpec extends BasicProjectBuilderITSpec {
 
     def setup() {
         buildConditionEvaluatorStub = Stub()
-        contextSpy.getBuildConditionEvaluator() >> buildConditionEvaluatorStub
+        given(contextSpy.getBuildConditionEvaluator()).willReturn(buildConditionEvaluatorStub)
     }
 
     def "should not release if not in release mode"() {

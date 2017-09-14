@@ -4,7 +4,7 @@ import groovy.transform.CompileStatic
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import info.solidsoft.gradle.cdeliveryboy.infra.ProjectPropertyReader
 
-import static info.solidsoft.gradle.cdeliveryboy.CDeliveryBoyPlugin.EXTENSION_NAME
+import static info.solidsoft.gradle.cdeliveryboy.CDeliveryBoyPluginConstants.EXTENSION_NAME
 
 @CompileStatic
 class PropertyOverrider {

@@ -1,16 +1,21 @@
 package info.solidsoft.gradle.cdeliveryboy
 
+import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesValidator
 import info.solidsoft.gradle.cdeliveryboy.logic.exception.MissingRequiredCiVariableException
 import org.gradle.api.ProjectConfigurationException
 import spock.util.Exceptions
+
+import static org.mockito.BDDMockito.given
 
 class PluginEnvValidationITSpec extends BasicProjectBuilderITSpec {
 
     def setup() {
         project.gradle.startParameter.taskNames = ["prepareForCiBuild"]
 
-        //Hacky and fragile - it would be good to be able to reset stubbing for CiVariablesValidator mock or override stubbing for context
-        contextSpy.getCiVariablesValidator().checkExistence() >> { throw new MissingRequiredCiVariableException(["MISSING_NAME_1"]) }
+        CiVariablesValidator ciVariablesValidatorStub = Stub() {
+            checkExistence() >> { throw new MissingRequiredCiVariableException(["MISSING_NAME_1"]) }
+        }
+        given(contextSpy.getCiVariablesValidator()).willReturn(ciVariablesValidatorStub)
     }
 
     def "should validate required environment properties if #taskName is to be executed"() {

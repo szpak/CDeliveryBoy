@@ -1,5 +1,6 @@
 package info.solidsoft.gradle.cdeliveryboy.infra
 
+import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskDependencer
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -23,4 +24,6 @@ interface IocContext {
     CiVariablesValidator getCiVariablesValidator()
 
     ReleaseVersionDeterminer getReleaseVersionDeterminer()
+
+    PrepareForCiBuildTaskDependencer getPrepareForCiBuildTaskDependencer()
 }
