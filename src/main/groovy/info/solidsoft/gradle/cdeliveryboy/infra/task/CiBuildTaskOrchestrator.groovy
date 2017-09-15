@@ -18,7 +18,7 @@ import java.lang.invoke.MethodHandles
 import static info.solidsoft.gradle.cdeliveryboy.CDeliveryBoyPluginConstants.PREPARE_FOR_CI_BUILD_TASK_NAME
 
 @CompileStatic
-class CiBuildTaskOrchestrator {
+class CiBuildTaskOrchestrator extends AbstractCiTaskOrchestrator {
 
     private static Logger log = Logging.getLogger(MethodHandles.lookup().lookupClass())
 
@@ -89,22 +89,5 @@ class CiBuildTaskOrchestrator {
         } else {
             return getJustOneTaskByNameOrFail(taskName)
         }
-    }
-
-    //TODO: Duplication
-    private boolean isGivenTaskExpectedToBeExecuted(Task taskToChecked) {
-        //Task graph would be more reliable, but it's available only after afterEvaluate phrase (in addition it's problematic to test with ProjectBuilder)
-        //toLowerCase as Gradle permits it when tasks are called from command line
-        List<String> requiredTaskNamesAsLowerCase = project.gradle.startParameter.taskNames.collect { it.toLowerCase() }
-        return requiredTaskNamesAsLowerCase.contains(taskToChecked.name.toLowerCase())
-    }
-
-    //TODO: Duplication
-    private Task getJustOneTaskByNameOrFail(String taskName) {
-        Set<Task> tasksByName = project.getTasksByName(taskName, false)
-        if (tasksByName.size() != 1) {
-            throw new BuildException("Expected exactly 1 task with name $taskName. Found ${tasksByName.size()}: '${tasksByName*.name}'", null)
-        }
-        return tasksByName.first()
     }
 }
