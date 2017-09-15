@@ -1,5 +1,9 @@
 # C(ontinuous)DeliveryBoy changelog
 
+## 0.7.1 - Unreleased
+
+ - Internal refactoring and improved testing
+
 ## 0.7.0 - 2017-09-12
 
  - Display release conditions in more human friendly way - [#8](https://github.com/szpak/CDeliveryBoy/issues/8)
