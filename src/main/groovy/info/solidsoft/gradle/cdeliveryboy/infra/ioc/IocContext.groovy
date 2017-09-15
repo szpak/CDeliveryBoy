@@ -1,5 +1,6 @@
 package info.solidsoft.gradle.cdeliveryboy.infra.ioc
 
+import info.solidsoft.gradle.cdeliveryboy.infra.task.TaskConfigurer
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
 import info.solidsoft.gradle.cdeliveryboy.infra.task.CiBuildTaskOrchestrator
@@ -31,4 +32,6 @@ interface IocContext {
     PrepareForCiBuildTaskOrchestrator getPrepareForCiBuildTaskOrchestrator()
 
     CiBuildTaskOrchestrator getCiBuildTaskOrchestrator()
+
+    TaskConfigurer getTaskConfigurer()
 }

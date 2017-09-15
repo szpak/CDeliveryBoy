@@ -1,6 +1,7 @@
 package info.solidsoft.gradle.cdeliveryboy.infra.ioc
 
 import groovy.transform.CompileStatic
+import info.solidsoft.gradle.cdeliveryboy.infra.task.TaskConfigurer
 import info.solidsoft.gradle.cdeliveryboy.infra.AxionReleaseVersionOverrider
 import info.solidsoft.gradle.cdeliveryboy.infra.EnvironmentVariableReader
 import info.solidsoft.gradle.cdeliveryboy.infra.OverriddenVersionInCommitMessageFinder
@@ -38,6 +39,7 @@ class ManualIocContext implements IocContext {
 
     private PrepareForCiBuildTaskOrchestrator prepareForCiBuildTaskDependencer
     private CiBuildTaskOrchestrator ciBuildTaskOrchestrator
+    private TaskConfigurer taskConfigurer
 
     ManualIocContext() {    //TODO: Remove it when https://github.com/spockframework/spock/issues/769 is fixed
         this(null, null)
@@ -70,6 +72,7 @@ class ManualIocContext implements IocContext {
                 getCiVariablesValidator(), getReleaseVersionDeterminer())
         ciBuildTaskOrchestrator = new CiBuildTaskOrchestrator(project, pluginConfig, getTaskConfig(), getBuildConditionEvaluator(),
                 getCiVariablesValidator())
+        taskConfigurer = new TaskConfigurer(project, pluginConfig, getCiVariablesConfig(), getEnvVariableReader())
     }
 
     private TaskConfig createTaskConfigOrFail(CDeliveryBoyPluginConfig pluginConfig) {
@@ -126,5 +129,10 @@ class ManualIocContext implements IocContext {
     @Override
     CiBuildTaskOrchestrator getCiBuildTaskOrchestrator() {
         return ciBuildTaskOrchestrator
+    }
+
+    @Override
+    TaskConfigurer getTaskConfigurer() {
+        return taskConfigurer
     }
 }
