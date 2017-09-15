@@ -21,23 +21,22 @@ class PropertyOverrider {
         pluginConfig.dryRunForceNonSnapshotVersion = getBooleanValueFromPropertyOrFallback("${EXTENSION_NAME}.dryRunForceNonSnapshotVersion", pluginConfig.dryRunForceNonSnapshotVersion)
     }
 
-    //TODO: Write tests to verify boolean logic (e.g. -PdryRun considered as true)
+    //TODO: Write integration tests to verify boolean logic (e.g. -PdryRun considered as true)
     private boolean getBooleanValueFromPropertyOrFallback(String propertyName, boolean fallbackValue) {
-        String projectProperty = projectPropertyReader.findByName(propertyName)
-        if (projectProperty != null) {
-            return projectProperty == "" || projectProperty.toBoolean()
-        } else {
-            return fallbackValue
-        }
+        return g(propertyName, fallbackValue) { it == "" || it.toBoolean() }
     }
 
-    //TODO: Remove duplication - with Closure constants doing a logic to determine value?
-    private String getStringValueFromPropertyOrFallback(String propertyName, boolean fallbackValue) {
-        String projectProperty = projectPropertyReader.findByName(propertyName)
-        if (projectProperty != null) {
-            return projectProperty
-        } else {
-            return fallbackValue
-        }
+    private String getStringValueFromPropertyOrFallback(String propertyName, String fallbackValue) {
+        return g(propertyName, fallbackValue) { it }
+    }
+
+    private <T> T g(String propertyName, T fallbackValue, StringToValue<T> conversion) {
+        String propertyValue = projectPropertyReader.findByName(propertyName)
+        return propertyValue != null ? conversion.apply(propertyValue) : fallbackValue
+    }
+
+    //To be replaced with Function once migrated to Java 8
+    private static interface StringToValue<V> {
+        V apply(String propertyValue)
     }
 }
