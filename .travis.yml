@@ -15,6 +15,7 @@ before_install:
  - rvm install 2.4.1
  - ruby --version
  - gem install --no-ri --no-rdoc chandler
+ - git status -v
 
 install: true
 script:
