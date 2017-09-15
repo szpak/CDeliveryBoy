@@ -37,7 +37,8 @@ class CDeliveryBoyPlugin implements Plugin<Project>, CDeliveryBoyPluginConstants
         CiBuildTaskInstantiator buildCiTaskInstantiator = new CiBuildTaskInstantiator(project, pluginConfig)
         CDeliveryBoyCiBuildTask buildTask = buildCiTaskInstantiator.createAndConfigureAndReturn()
 
-        PushRelease2Task pushRelease2Task = createPushRelease2Task(project)
+        PushReleaseTaskInstantiator pushReleaseTaskInstantiator = new PushReleaseTaskInstantiator(project, pluginConfig)
+        PushRelease2Task pushRelease2Task = pushReleaseTaskInstantiator.createPushRelease2Task()
 
         new DependantPluginsConfigurer(project).applyAndPreconfigureIfNeeded()  //Not in context as it's to early
 
@@ -53,22 +54,6 @@ class CDeliveryBoyPlugin implements Plugin<Project>, CDeliveryBoyPluginConstants
                 configurePushRelease2Task(pushRelease2Task, pluginConfig, ciVariablesConfig, envVariableReader)
             }
         }
-    }
-
-    private PushRelease2Task createPushRelease2Task(Project project) {
-        return project.tasks.create(PUSH_RELEASE2_TASK_NAME, PushRelease2Task).with {
-            description = "Performs second stage of release - pushes tag to remote (workaround on Axion limitation with refspec)"
-            group = RELEASE_TASKS_GROUP_NAME
-            return it
-        }
-    }
-
-
-    private boolean isGivenTaskExpectedToBeExecuted(Task taskToChecked) {
-        //Task graph would be more reliable, but it's available only after afterEvaluate phrase (in addition it's problematic to test with ProjectBuilder)
-        //toLowerCase as Gradle permits it when tasks are called from command line
-        List<String> requiredTaskNamesAsLowerCase = project.gradle.startParameter.taskNames.collect { it.toLowerCase() }
-        return requiredTaskNamesAsLowerCase.contains(taskToChecked.name.toLowerCase())
     }
 
     @CompileDynamic

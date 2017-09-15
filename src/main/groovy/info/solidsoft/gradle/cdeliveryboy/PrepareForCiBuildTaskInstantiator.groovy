@@ -35,7 +35,7 @@ class PrepareForCiBuildTaskInstantiator implements CDeliveryBoyPluginConstants {
     }
 
     @CompileDynamic
-    private void configurePrepareTask(CDeliveryBoyCiPrepareTask prepareTask, CDeliveryBoyPluginConfig pluginConfig) {
+    private void configurePrepareTask(CDeliveryBoyCiPrepareTask prepareTask, CDeliveryBoyPluginConfig pluginConfig) {   //TODO: Too many parameters
         prepareTask.conventionMapping.with {
             ciType = { pluginConfig.ciType }
             releaseBranch = { pluginConfig.git.releaseBranch }
