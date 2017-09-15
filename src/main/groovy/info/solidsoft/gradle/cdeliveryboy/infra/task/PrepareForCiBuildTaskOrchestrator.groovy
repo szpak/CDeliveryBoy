@@ -15,7 +15,7 @@ import org.gradle.tooling.BuildException
 import java.lang.invoke.MethodHandles
 
 @CompileStatic
-class PrepareForCiBuildTaskDependencer {
+class PrepareForCiBuildTaskOrchestrator {
 
     private static Logger log = Logging.getLogger(MethodHandles.lookup().lookupClass())
 
@@ -25,9 +25,9 @@ class PrepareForCiBuildTaskDependencer {
     private final CiVariablesValidator ciVariablesValidator
     private final ReleaseVersionDeterminer releaseVersionDeterminer
 
-    PrepareForCiBuildTaskDependencer(Project project, TaskConfig taskConfig,
-                                       BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator,
-                                       ReleaseVersionDeterminer releaseVersionDeterminer) {
+    PrepareForCiBuildTaskOrchestrator(Project project, TaskConfig taskConfig,
+                                      BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator,
+                                      ReleaseVersionDeterminer releaseVersionDeterminer) {
         this.project = project
         this.taskConfig = taskConfig
         this.buildConditionEvaluator = buildConditionEvaluator

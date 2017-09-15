@@ -2,7 +2,8 @@ package info.solidsoft.gradle.cdeliveryboy.infra.ioc
 
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
-import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskDependencer
+import info.solidsoft.gradle.cdeliveryboy.infra.task.CiBuildTaskOrchestrator
+import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskOrchestrator
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CiVariablesConfig
@@ -27,5 +28,7 @@ interface IocContext {
 
     ReleaseVersionDeterminer getReleaseVersionDeterminer()
 
-    PrepareForCiBuildTaskDependencer getPrepareForCiBuildTaskDependencer()
+    PrepareForCiBuildTaskOrchestrator getPrepareForCiBuildTaskOrchestrator()
+
+    CiBuildTaskOrchestrator getCiBuildTaskOrchestrator()
 }

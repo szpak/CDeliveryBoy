@@ -8,7 +8,8 @@ import info.solidsoft.gradle.cdeliveryboy.infra.ProjectPropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.PropertyReader
 import info.solidsoft.gradle.cdeliveryboy.infra.ReleaseVersionDeterminer
 import info.solidsoft.gradle.cdeliveryboy.infra.config.DefaultProjectConfig
-import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskDependencer
+import info.solidsoft.gradle.cdeliveryboy.infra.task.CiBuildTaskOrchestrator
+import info.solidsoft.gradle.cdeliveryboy.infra.task.PrepareForCiBuildTaskOrchestrator
 import info.solidsoft.gradle.cdeliveryboy.logic.BuildConditionEvaluator
 import info.solidsoft.gradle.cdeliveryboy.logic.PropertyOverrider
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
@@ -35,7 +36,8 @@ class ManualIocContext implements IocContext {
     private CiVariablesValidator ciVariablesValidator
     private ReleaseVersionDeterminer releaseVersionDeterminer
 
-    private PrepareForCiBuildTaskDependencer prepareForCiBuildTaskDependencer
+    private PrepareForCiBuildTaskOrchestrator prepareForCiBuildTaskDependencer
+    private CiBuildTaskOrchestrator ciBuildTaskOrchestrator
 
     ManualIocContext() {    //TODO: Remove it when https://github.com/spockframework/spock/issues/769 is fixed
         this(null, null)
@@ -64,8 +66,10 @@ class ManualIocContext implements IocContext {
         ciVariablesValidator = new CiVariablesValidator(getEnvVariableReader(), getCiVariablesConfig())
         releaseVersionDeterminer = new ReleaseVersionDeterminer(AxionReleaseVersionOverrider.forProject(project))
 
-        prepareForCiBuildTaskDependencer = new PrepareForCiBuildTaskDependencer(project, getTaskConfig(), getBuildConditionEvaluator(),
+        prepareForCiBuildTaskDependencer = new PrepareForCiBuildTaskOrchestrator(project, getTaskConfig(), getBuildConditionEvaluator(),
                 getCiVariablesValidator(), getReleaseVersionDeterminer())
+        ciBuildTaskOrchestrator = new CiBuildTaskOrchestrator(project, pluginConfig, getTaskConfig(), getBuildConditionEvaluator(),
+                getCiVariablesValidator())
     }
 
     private TaskConfig createTaskConfigOrFail(CDeliveryBoyPluginConfig pluginConfig) {
@@ -115,7 +119,12 @@ class ManualIocContext implements IocContext {
     }
 
     @Override
-    PrepareForCiBuildTaskDependencer getPrepareForCiBuildTaskDependencer() {
+    PrepareForCiBuildTaskOrchestrator getPrepareForCiBuildTaskOrchestrator() {
         return prepareForCiBuildTaskDependencer
+    }
+
+    @Override
+    CiBuildTaskOrchestrator getCiBuildTaskOrchestrator() {
+        return ciBuildTaskOrchestrator
     }
 }
