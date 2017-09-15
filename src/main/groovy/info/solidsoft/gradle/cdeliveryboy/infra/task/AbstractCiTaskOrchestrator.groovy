@@ -1,11 +1,20 @@
 package info.solidsoft.gradle.cdeliveryboy.infra.task
 
+import groovy.transform.CompileStatic
 import groovy.transform.PackageScope
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.tooling.BuildException
 
+@CompileStatic
 @PackageScope
 abstract class AbstractCiTaskOrchestrator {
+
+    protected final Project project
+
+    protected AbstractCiTaskOrchestrator(Project project) {
+        this.project = project
+    }
 
     protected boolean isGivenTaskExpectedToBeExecuted(Task taskToChecked) {
         //Task graph would be more reliable, but it's available only after afterEvaluate phrase (in addition it's problematic to test with ProjectBuilder)

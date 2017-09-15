@@ -22,7 +22,6 @@ class CiBuildTaskOrchestrator extends AbstractCiTaskOrchestrator {
 
     private static Logger log = Logging.getLogger(MethodHandles.lookup().lookupClass())
 
-    private final Project project
     private final TaskConfig taskConfig
     private final BuildConditionEvaluator buildConditionEvaluator
     private final CiVariablesValidator ciVariablesValidator
@@ -30,7 +29,7 @@ class CiBuildTaskOrchestrator extends AbstractCiTaskOrchestrator {
 
     CiBuildTaskOrchestrator(Project project, CDeliveryBoyPluginConfig pluginConfig, TaskConfig taskConfig,
                                        BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator) {
-        this.project = project
+        super(project)
         this.pluginConfig = pluginConfig
         this.taskConfig = taskConfig
         this.buildConditionEvaluator = buildConditionEvaluator

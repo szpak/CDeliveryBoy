@@ -17,7 +17,6 @@ class PrepareForCiBuildTaskOrchestrator extends AbstractCiTaskOrchestrator {
 
     private static Logger log = Logging.getLogger(MethodHandles.lookup().lookupClass())
 
-    private final Project project
     private final TaskConfig taskConfig
     private final BuildConditionEvaluator buildConditionEvaluator
     private final CiVariablesValidator ciVariablesValidator
@@ -26,7 +25,7 @@ class PrepareForCiBuildTaskOrchestrator extends AbstractCiTaskOrchestrator {
     PrepareForCiBuildTaskOrchestrator(Project project, TaskConfig taskConfig,
                                       BuildConditionEvaluator buildConditionEvaluator, CiVariablesValidator ciVariablesValidator,
                                       ReleaseVersionDeterminer releaseVersionDeterminer) {
-        this.project = project
+        super(project)
         this.taskConfig = taskConfig
         this.buildConditionEvaluator = buildConditionEvaluator
         this.ciVariablesValidator = ciVariablesValidator
