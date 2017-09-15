@@ -75,7 +75,7 @@ class BuildConditionEvaluator {
         return """
 ${f isInReleaseMode()} IN RELEASE MODE
   ${f isInReleaseBranch()} in release branch
-    ${f pluginConfig.git.releaseBranch == getActualBranchName()} configured: '${pluginConfig.git.releaseBranch}', actual: '${getActualBranchName()}'
+    ${renderBranchCondition()}
     ${f !isPrBuild()} not PR build
   ${f isReleaseTriggered()} release triggered
     ${f !isSkippedByEnvVariable()} not skipped by env variable ('${pluginConfig.trigger.skipReleaseVariableName}')
@@ -89,6 +89,12 @@ ${f isInReleaseMode()} IN RELEASE MODE
 
     private f(boolean booleanToFormat) {
         return booleanToFormat ? "✔" : "✘"
+    }
+
+    private String renderBranchCondition() {
+        boolean isBranchMatches = pluginConfig.git.releaseBranch == getActualBranchName()
+        String actualPart = !isBranchMatches ? ", actual: '${getActualBranchName()}'" : ''
+        return "${f isBranchMatches} configured: '${pluginConfig.git.releaseBranch}'${actualPart}"
     }
 
     @Deprecated

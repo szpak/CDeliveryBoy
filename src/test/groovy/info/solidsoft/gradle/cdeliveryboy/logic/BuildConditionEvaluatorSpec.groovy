@@ -131,7 +131,7 @@ class BuildConditionEvaluatorSpec extends Specification {
     def "should display conditions in human-friendly way"() {
         given:
             ciVariablesConfig.branchNameName >> TEST_CI_BRANCH_NAME
-            environmentVariableReader.findByName(TEST_CI_BRANCH_NAME) >> "master"
+            environmentVariableReader.findByName(TEST_CI_BRANCH_NAME) >> "devel"
             ciVariablesConfig.isPrName >> TEST_CI_IS_PR_NAME
             environmentVariableReader.findByName(TEST_CI_IS_PR_NAME) >> true
             trigger.releaseOnDemand >> true
@@ -143,7 +143,7 @@ class BuildConditionEvaluatorSpec extends Specification {
             buildConditionEvaluator.getReleaseConditionsAsString() == """
 ✘ IN RELEASE MODE
   ✘ in release branch
-    ✔ configured: 'master', actual: 'master'
+    ✘ configured: 'master', actual: 'devel'
     ✘ not PR build
   ✔ release triggered
     ✔ not skipped by env variable ('TEST_SKIP_RELEASE')
@@ -153,5 +153,13 @@ class BuildConditionEvaluatorSpec extends Specification {
   - current version: '0.3.2-SNAPSHOT'
   - overridden version: '0.5.0-over'
 """
+    }
+
+    def "should display branch name only once if matches"() {
+        given:
+            ciVariablesConfig.branchNameName >> TEST_CI_BRANCH_NAME
+            environmentVariableReader.findByName(TEST_CI_BRANCH_NAME) >> 'master'
+        expect:
+            buildConditionEvaluator.getReleaseConditionsAsString().contains("✔ configured: 'master'")
     }
 }
