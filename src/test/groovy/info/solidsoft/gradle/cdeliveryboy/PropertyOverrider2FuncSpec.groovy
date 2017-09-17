@@ -15,7 +15,7 @@ class PropertyOverrider2FuncSpec extends IntegrationTestKitSpec implements WithP
     @Rule
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
-    def "finish build successfully and display missed conditions on 'prepareCiBuild' performed in non release mode"() {
+    def "finish build successfully and display missed conditions on '#ciTask' performed in non release mode"() {
         given:
             prepareNonReleasingTravisEnvironmentVariables()
         and:
@@ -29,9 +29,14 @@ class PropertyOverrider2FuncSpec extends IntegrationTestKitSpec implements WithP
         and:
             writeHelloWorld('gradle.cdeliveryboy.test.hello')
         when:
-            BuildResult result = runTasks('prepareForCiBuild')
+            BuildResult result = runTasks(ciTask)
         then:
             result.output.contains("✘ IN RELEASE MODE")
+            result.tasks.collect { it.path }.containsAll(expectedTasksToExecute)
+        where:
+            ciTask              || expectedTasksToExecute
+            "prepareForCiBuild" || []
+            "ciBuild"           || [":test", ":build"]
     }
 
     def "override configured plugin configuration from command line"() {
@@ -58,26 +63,6 @@ class PropertyOverrider2FuncSpec extends IntegrationTestKitSpec implements WithP
                 result.output.contains("cDeliveryBoy.dryRun: true")
                 result.output.contains("cDeliveryBoy.dryRunForceNonSnapshotVersion: true")
             }
-    }
-
-    def "finish build successfully and display missed conditions on 'ciBuild' performed in non release mode"() {
-        given:
-            prepareNonReleasingTravisEnvironmentVariables()
-        and:
-            buildFile << """
-                plugins {
-                    id 'info.solidsoft.cdeliveryboy'
-                }
-                apply plugin: 'java'
-                version = "0.1.0-SNAPSHOT"
-            """.stripIndent()
-        and:
-            writeHelloWorld('gradle.cdeliveryboy.test.hello')
-        when:
-            BuildResult result = runTasks('ciBuild')
-        then:
-            result.output.contains("✘ IN RELEASE MODE")
-            result.tasks.collect { it.path }.containsAll(":test", ":build")
     }
 
     private void prepareNonReleasingTravisEnvironmentVariables() {
