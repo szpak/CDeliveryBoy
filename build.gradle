@@ -9,11 +9,14 @@ buildscript {
         classpath 'info.solidsoft.gradle:cdeliveryboy:0.7.0'
         classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
         classpath 'com.toomuchcoding:uptodate-gradle-plugin:1.0.1'
+        classpath "gradle.plugin.com.palantir.ideatestfix:gradle-idea-test-fix:0.1.0"
     }
 }
 
 apply plugin: 'groovy'
+apply plugin: 'java-gradle-plugin'
 apply plugin: 'com.toomuchcoding.uptodate'
+apply plugin: "com.palantir.idea-test-fix"
 apply plugin: 'info.solidsoft.cdeliveryboy'
 
 cDeliveryBoy {
@@ -63,6 +66,14 @@ dependencies {
     testCompile 'org.objenesis:objenesis:2.6'   //for mocking in Spock
     testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.1'
     testCompile 'org.mockito:mockito-core:2.10.0'   //needed for one specific case in BasicProjectBuilderITSpec
+
+    //TODO: Separate functional tests
+    testCompile gradleTestKit()
+    testCompile('com.netflix.nebula:nebula-test:6.1.2') {
+        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+    }
+    testCompile 'com.github.stefanbirkner:system-rules:1.16.0'  //for overriding environment variables in functional tests
+    testCompile 'org.ajoberstar:grgit:1.7.2'
 }
 
 def repoSlug = 'szpak/cdeliveryboy'
