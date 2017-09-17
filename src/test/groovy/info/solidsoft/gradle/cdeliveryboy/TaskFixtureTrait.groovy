@@ -4,13 +4,15 @@ import groovy.transform.CompileStatic
 import groovy.transform.SelfType
 import info.solidsoft.gradle.cdeliveryboy.logic.config.CDeliveryBoyPluginConfig
 import org.gradle.api.Task
+import org.gradle.api.internal.project.ProjectInternal
 
 @SelfType(ProjectAware)
 @CompileStatic
 trait TaskFixtureTrait {
 
     void triggerEvaluate() {
-        getJustOneTaskByNameOrFail('tasks')
+        //Not available in public API, alternatively 'getJustOneTaskByNameOrFail("tasks")' could be used
+        ((ProjectInternal) project).evaluate()
     }
 
     Task getJustOneTaskByNameOrFail(String taskName) {
