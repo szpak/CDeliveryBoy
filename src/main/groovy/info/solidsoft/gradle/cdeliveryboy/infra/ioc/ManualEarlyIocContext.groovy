@@ -20,6 +20,11 @@ class ManualEarlyIocContext implements EarlyIocContext {
         this.pluginConfig = pluginConfig
     }
 
+    void initialize() {
+        taskCreator = new TaskCreator(project)
+        dependantPluginsConfigurer = new DependantPluginsConfigurer(project)
+    }
+
     @Override
     TaskCreator getTaskCreator() {
         return taskCreator
@@ -28,10 +33,5 @@ class ManualEarlyIocContext implements EarlyIocContext {
     @Override
     DependantPluginsConfigurer getDependantPluginsConfigurer() {
         return dependantPluginsConfigurer
-    }
-
-    void initialize() {
-        taskCreator = new TaskCreator(project)
-        dependantPluginsConfigurer = new DependantPluginsConfigurer(project)
     }
 }
