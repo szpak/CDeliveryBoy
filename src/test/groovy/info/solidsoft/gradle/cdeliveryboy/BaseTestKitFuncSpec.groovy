@@ -88,4 +88,12 @@ class BaseTestKitFuncSpec extends Specification implements WithNebulaTestGoodies
         environmentVariables.set("TRAVIS_COMMIT_MSG", "Dummy commit")
         environmentVariables.set("TRAVIS_REPO_SLUG", "foo/bar")
     }
+
+    //To do not fail on Travis itself
+    protected void clearTravisEnvironmentVariables() {
+        environmentVariables.set("TRAVIS_PULL_REQUEST", null)
+        environmentVariables.set("TRAVIS_BRANCH", null)
+        environmentVariables.set("TRAVIS_COMMIT_MSG", null)
+        environmentVariables.set("TRAVIS_REPO_SLUG", null)
+    }
 }
