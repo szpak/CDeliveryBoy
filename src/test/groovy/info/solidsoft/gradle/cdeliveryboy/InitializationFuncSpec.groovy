@@ -3,12 +3,9 @@ package info.solidsoft.gradle.cdeliveryboy
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 
-//TODO: Is it worth using nebula-test?
 class InitializationFuncSpec extends BaseTestKitFuncSpec {
 
     def "initialize and provide 2 main tasks"() {
-        given:
-            writeHelloWorld('gradle.cdeliveryboy.test.hello')
         when:
             BuildResult result = runTasks('tasks')
         then:
@@ -33,6 +30,6 @@ class InitializationFuncSpec extends BaseTestKitFuncSpec {
                 .withPluginClasspath()
                 .forwardOutput()
                 .buildAndFail()
-        return checkForDeprecations(result)
+        return /*checkForDeprecations*/(result)
     }
 }

@@ -16,10 +16,6 @@ class NoInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProject
     def "finish build successfully and display missed conditions on '#ciTask' performed in non release mode"() {
         given:
             prepareNonReleasingTravisEnvironmentVariables()
-        and:
-            buildFile << basicBuildFile()
-        and:
-            writeHelloWorld('gradle.cdeliveryboy.test.hello')
         when:
             BuildResult result = runTasks(ciTask)
         then:
@@ -33,7 +29,6 @@ class NoInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProject
 
     def "override configured plugin configuration from command line"() {
         given:
-            buildFile << basicBuildFile()
             buildFile << """
                 prepareForCiBuild.doFirst {
                     println "cDeliveryBoy.dryRun: " + cDeliveryBoy.dryRun

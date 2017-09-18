@@ -69,9 +69,6 @@ dependencies {
 
     //TODO: Separate functional tests
     testCompile gradleTestKit()
-    testCompile('com.netflix.nebula:nebula-test:6.1.2') {
-        exclude group: 'org.codehaus.groovy', module: 'groovy-all'
-    }
     testCompile 'com.github.stefanbirkner:system-rules:1.16.0'  //for overriding environment variables in functional tests
     testCompile 'org.ajoberstar:grgit:1.7.2'
 }
