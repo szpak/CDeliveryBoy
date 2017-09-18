@@ -5,7 +5,7 @@ import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.rules.TemporaryFolder
 
-class NoInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProjectInExternalGitRepo {
+class NotInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProjectInExternalGitRepo {
 
     @Rule
     public final TemporaryFolder tmpOutsideFolderDir = new TemporaryFolder()

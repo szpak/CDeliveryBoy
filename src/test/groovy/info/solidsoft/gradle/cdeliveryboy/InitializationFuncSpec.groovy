@@ -1,7 +1,6 @@
 package info.solidsoft.gradle.cdeliveryboy
 
 import org.gradle.testkit.runner.BuildResult
-import org.gradle.testkit.runner.GradleRunner
 
 class InitializationFuncSpec extends BaseTestKitFuncSpec {
 
@@ -21,15 +20,4 @@ class InitializationFuncSpec extends BaseTestKitFuncSpec {
     }
 
     //TODO: Write regression test with different Gradle versions
-
-    private BuildResult runTasksAndFail(String... tasks) {
-        BuildResult result = GradleRunner.create()
-                .withProjectDir(projectDir)
-                .withArguments(*tasks.plus("-i"))
-                .withDebug(debug)
-                .withPluginClasspath()
-                .forwardOutput()
-                .buildAndFail()
-        return /*checkForDeprecations*/(result)
-    }
 }
