@@ -5,12 +5,17 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion
 import org.junit.Rule
+import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.rules.TemporaryFolder
 import org.junit.rules.TestName
 import spock.lang.Specification
 
 @CompileStatic
 class BaseTestKitFuncSpec extends Specification implements WithNebulaTestGoodies {
+
+    //cannot be moved to separate trait as JUnit rules are not detected in traits
+    @Rule
+    public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
     @Rule
     TestName testName = new TestName()
@@ -75,5 +80,12 @@ class BaseTestKitFuncSpec extends Specification implements WithNebulaTestGoodies
     protected BuildResult checkForDeprecations(BuildResult result) {
         checkForDeprecationsInOutput(result.output)
         return result
+    }
+
+    protected void prepareNonReleasingTravisEnvironmentVariables() {
+        environmentVariables.set("TRAVIS_PULL_REQUEST", "false")
+        environmentVariables.set("TRAVIS_BRANCH", "release")
+        environmentVariables.set("TRAVIS_COMMIT_MSG", "Dummy commit")
+        environmentVariables.set("TRAVIS_REPO_SLUG", "foo/bar")
     }
 }
