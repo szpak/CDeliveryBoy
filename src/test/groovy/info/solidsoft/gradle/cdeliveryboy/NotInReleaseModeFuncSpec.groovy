@@ -10,7 +10,7 @@ class NotInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProjec
     @Rule
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
 
-    def "finish build successfully and display missed conditions on 'prepareForCiBuild' performed in non release mode with Gradle '#gradleVersionToTest'"() {
+    def "display missed conditions on 'prepareForCiBuild' performed in non release mode with Gradle '#gradleVersionToTest'"() {
         given:
             prepareNonReleasingTravisEnvironmentVariables()
         and:
@@ -23,7 +23,7 @@ class NotInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProjec
             gradleVersionToTest << determineGradleVersionsToTest()
     }
 
-    def "finish build successfully and display missed conditions on 'ciBuild' performed in non release mode with Gradle '#gradleVersionToTest'"() {
+    def "display missed conditions on 'ciBuild' performed in non release mode with Gradle '#gradleVersionToTest'"() {
         given:
             prepareNonReleasingTravisEnvironmentVariables()
         and:
