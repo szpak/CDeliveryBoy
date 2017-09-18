@@ -3,12 +3,8 @@ package info.solidsoft.gradle.cdeliveryboy
 import org.gradle.testkit.runner.BuildResult
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
-import org.junit.rules.TemporaryFolder
 
 class NotInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProjectInExternalGitRepo {
-
-    @Rule
-    public final TemporaryFolder tmpOutsideFolderDir = new TemporaryFolder()
 
     @Rule
     public final EnvironmentVariables environmentVariables = new EnvironmentVariables();
