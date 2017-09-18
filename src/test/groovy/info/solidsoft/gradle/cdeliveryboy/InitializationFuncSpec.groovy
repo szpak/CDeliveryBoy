@@ -5,7 +5,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 
 //TODO: Is it worth using nebula-test?
-class PropertyOverriderFuncSpec extends IntegrationTestKitSpec {
+class InitializationFuncSpec extends IntegrationTestKitSpec {
 
     def "initialize and provide 2 main tasks"() {
         given:

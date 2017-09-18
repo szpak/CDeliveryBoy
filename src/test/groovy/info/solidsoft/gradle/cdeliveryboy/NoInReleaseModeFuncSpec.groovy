@@ -6,7 +6,7 @@ import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.rules.TemporaryFolder
 
-class PropertyOverrider2FuncSpec extends IntegrationTestKitSpec implements WithProjectInExternalGitRepo {
+class NoInReleaseModeFuncSpec extends IntegrationTestKitSpec implements WithProjectInExternalGitRepo {
 
     //Cannot be moved to WithProjectInExternalGitRepo as there is problem with rules in Groovy traits
     @Rule
