@@ -1,14 +1,12 @@
 package info.solidsoft.gradle.cdeliveryboy
 
-import nebula.test.IntegrationTestKitSpec
 import org.gradle.testkit.runner.BuildResult
 import org.junit.Rule
 import org.junit.contrib.java.lang.system.EnvironmentVariables
 import org.junit.rules.TemporaryFolder
 
-class NoInReleaseModeFuncSpec extends IntegrationTestKitSpec implements WithProjectInExternalGitRepo {
+class NoInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProjectInExternalGitRepo {
 
-    //Cannot be moved to WithProjectInExternalGitRepo as there is problem with rules in Groovy traits
     @Rule
     public final TemporaryFolder tmpOutsideFolderDir = new TemporaryFolder()
 
@@ -19,13 +17,7 @@ class NoInReleaseModeFuncSpec extends IntegrationTestKitSpec implements WithProj
         given:
             prepareNonReleasingTravisEnvironmentVariables()
         and:
-            buildFile << """
-                plugins {
-                    id 'info.solidsoft.cdeliveryboy'
-                }
-                apply plugin: 'java'
-                version = "0.1.0-SNAPSHOT"
-            """.stripIndent()
+            buildFile << basicBuildFile()
         and:
             writeHelloWorld('gradle.cdeliveryboy.test.hello')
         when:
@@ -41,13 +33,8 @@ class NoInReleaseModeFuncSpec extends IntegrationTestKitSpec implements WithProj
 
     def "override configured plugin configuration from command line"() {
         given:
+            buildFile << basicBuildFile()
             buildFile << """
-                plugins {
-                    id 'info.solidsoft.cdeliveryboy'
-                }
-                apply plugin: 'java'
-                version = "0.1.0-SNAPSHOT"
-                
                 prepareForCiBuild.doFirst {
                     println "cDeliveryBoy.dryRun: " + cDeliveryBoy.dryRun
                     println "cDeliveryBoy.dryRunForceNonSnapshotVersion: " + cDeliveryBoy.dryRunForceNonSnapshotVersion

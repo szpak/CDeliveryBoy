@@ -1,21 +1,13 @@
 package info.solidsoft.gradle.cdeliveryboy
 
-import nebula.test.IntegrationTestKitSpec
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 
 //TODO: Is it worth using nebula-test?
-class InitializationFuncSpec extends IntegrationTestKitSpec {
+class InitializationFuncSpec extends BaseTestKitFuncSpec {
 
     def "initialize and provide 2 main tasks"() {
         given:
-            buildFile << """
-                plugins {
-                    id 'info.solidsoft.cdeliveryboy'
-                }
-                apply plugin: 'java'
-            """.stripIndent()
-        and:
             writeHelloWorld('gradle.cdeliveryboy.test.hello')
         when:
             BuildResult result = runTasks('tasks')
@@ -25,13 +17,6 @@ class InitializationFuncSpec extends IntegrationTestKitSpec {
     }
 
     def "initialize and fail on missing Travis configuration environment"() {
-        given:
-            buildFile << """
-                plugins {
-                    id 'info.solidsoft.cdeliveryboy'
-                }
-                apply plugin: 'java'
-            """.stripIndent()
         when:
             BuildResult result = runTasksAndFail('prepareForCiBuild')
         then:
