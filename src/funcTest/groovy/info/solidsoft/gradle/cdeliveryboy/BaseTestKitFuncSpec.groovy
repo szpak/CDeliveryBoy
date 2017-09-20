@@ -12,7 +12,7 @@ import org.junit.rules.TestName
 import spock.lang.Specification
 
 @CompileStatic
-class BaseTestKitFuncSpec extends Specification implements WithNebulaTestGoodies {
+abstract class BaseTestKitFuncSpec extends Specification implements WithNebulaTestGoodies {
 
     //cannot be moved to separate trait as JUnit rules are not detected in traits
     @Rule
