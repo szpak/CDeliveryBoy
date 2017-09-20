@@ -4,6 +4,7 @@
 
  - Functional smoke tests
  - Upgrade to Gradle 4.1
+ - Internal Gradle configuration refactoring
 
 ## 0.7.1 - 2017-09-15
 
@@ -13,6 +14,7 @@
 
  - Display release conditions in more human friendly way - [#8](https://github.com/szpak/CDeliveryBoy/issues/8)
  - Disable remote branch validation by default - Travis works on detached branches
+ - Deprecate `isInReleaseMode` property in release tasks (replaced with `inReleaseMode`)
 
 ## 0.6.0 - 2017-07-04
 
