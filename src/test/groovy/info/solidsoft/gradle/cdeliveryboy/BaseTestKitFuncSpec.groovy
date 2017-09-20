@@ -37,6 +37,8 @@ class BaseTestKitFuncSpec extends Specification implements WithNebulaTestGoodies
         settingsFile = new File(projectDir, "settings.gradle")
 
         buildFile << basicBuildFile()
+
+        clearTravisEnvironmentVariables()
     }
 
     private void configureProjectDirInBuildReplaceIfExists() {
@@ -89,8 +91,8 @@ class BaseTestKitFuncSpec extends Specification implements WithNebulaTestGoodies
         environmentVariables.set("TRAVIS_REPO_SLUG", "foo/bar")
     }
 
-    //To do not fail on Travis itself
     protected void clearTravisEnvironmentVariables() {
+        //Do not fail on Travis itself
         environmentVariables.set("TRAVIS_PULL_REQUEST", null)
         environmentVariables.set("TRAVIS_BRANCH", null)
         environmentVariables.set("TRAVIS_COMMIT_MSG", null)
