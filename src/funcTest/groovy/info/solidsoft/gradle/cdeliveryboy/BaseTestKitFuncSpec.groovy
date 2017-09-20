@@ -1,6 +1,7 @@
 package info.solidsoft.gradle.cdeliveryboy
 
 import groovy.transform.CompileStatic
+import info.solidsoft.gradle.cdeliveryboy.fixture.WithNebulaTestGoodies
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.util.GradleVersion

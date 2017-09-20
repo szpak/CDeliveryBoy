@@ -1,6 +1,7 @@
 package info.solidsoft.gradle.cdeliveryboy
 
 import info.solidsoft.gradle.cdeliveryboy.fixture.WithGradleVersionsDeterminer
+import info.solidsoft.gradle.cdeliveryboy.fixture.WithProjectInExternalGitRepo
 import org.gradle.testkit.runner.BuildResult
 
 class NotInReleaseModeFuncSpec extends BaseTestKitFuncSpec implements WithProjectInExternalGitRepo, WithGradleVersionsDeterminer {

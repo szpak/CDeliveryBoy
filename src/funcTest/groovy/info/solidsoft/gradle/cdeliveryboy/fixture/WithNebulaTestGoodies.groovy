@@ -1,4 +1,4 @@
-package info.solidsoft.gradle.cdeliveryboy
+package info.solidsoft.gradle.cdeliveryboy.fixture
 
 import groovy.transform.CompileStatic
 

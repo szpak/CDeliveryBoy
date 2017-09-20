@@ -1,6 +1,7 @@
-package info.solidsoft.gradle.cdeliveryboy
+package info.solidsoft.gradle.cdeliveryboy.fixture
 
 import groovy.transform.SelfType
+import info.solidsoft.gradle.cdeliveryboy.BaseTestKitFuncSpec
 import org.ajoberstar.grgit.Grgit
 
 @SelfType(BaseTestKitFuncSpec)
