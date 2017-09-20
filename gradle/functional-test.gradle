@@ -1,0 +1,32 @@
+//Functional tests configuration
+
+sourceSets {
+    funcTest {
+        groovy.srcDir file('src/funcTest/groovy')
+        resources.srcDir file('src/funcTest/resources')
+        compileClasspath += sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+task funcTest(type: Test) {
+    description = 'Runs the functional tests.'
+    group = 'Verification'
+    testClassesDirs = sourceSets.funcTest.output.classesDirs
+    classpath = sourceSets.funcTest.runtimeClasspath
+    mustRunAfter test
+}
+
+check.shouldRunAfter funcTest
+check.dependsOn funcTestClasses     //or more generically: tasks.withType(AbstractCompile)
+uploadArchives.dependsOn funcTest, check
+
+dependencies {
+    funcTestCompile gradleTestKit()
+    funcTestCompile 'com.github.stefanbirkner:system-rules:1.16.0'  //for overriding environment variables in functional tests
+    funcTestCompile 'org.ajoberstar:grgit:1.7.2'    //for Git repo setup
+}
+
+gradlePlugin {
+    testSourceSets sourceSets.funcTest
+}

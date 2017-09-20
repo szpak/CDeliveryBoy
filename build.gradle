@@ -15,6 +15,7 @@ buildscript {
 
 apply plugin: 'groovy'
 apply plugin: 'java-gradle-plugin'
+apply from: "$rootDir/gradle/functional-test.gradle"
 apply plugin: 'com.toomuchcoding.uptodate'
 apply plugin: "com.palantir.idea-test-fix"
 apply plugin: 'info.solidsoft.cdeliveryboy'
@@ -66,11 +67,6 @@ dependencies {
     testCompile 'org.objenesis:objenesis:2.6'   //for mocking in Spock
     testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.1'
     testCompile 'org.mockito:mockito-core:2.10.0'   //needed for one specific case in BasicProjectBuilderITSpec
-
-    //TODO: Separate functional tests
-    testCompile gradleTestKit()
-    testCompile 'com.github.stefanbirkner:system-rules:1.16.0'  //for overriding environment variables in functional tests
-    testCompile 'org.ajoberstar:grgit:1.7.2'
 }
 
 def repoSlug = 'szpak/cdeliveryboy'
