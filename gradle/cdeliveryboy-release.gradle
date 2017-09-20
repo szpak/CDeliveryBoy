@@ -1,0 +1,114 @@
+//Continuous Delivery release configuration with CDeliveryBoy
+
+apply plugin: 'info.solidsoft.cdeliveryboy'
+
+cDeliveryBoy {
+    tasks {
+        promoteRepositoryTask = "releaseRepository"
+    }
+    nexus {
+        autoPromote = true
+    }
+}
+
+nexusStaging {
+    packageGroup = "info.solidsoft"
+}
+
+scmVersion {
+    hooks {
+        pre 'fileUpdate', [file       : 'README.md', pattern: { previousVersion, context -> /classpath\ 'info\.solidsoft\.gradle:cdeliveryboy:$previousVersion'/ },
+                           replacement: { currentVersion, context -> "classpath 'info.solidsoft.gradle:cdeliveryboy:$currentVersion'" }]
+        pre 'fileUpdate', [file       : 'CHANGELOG.md', pattern: { previousVersion, context -> /^##\ ${context.currentVersion}\ -\ Unreleased$/ },
+                           replacement: { currentVersion, context -> "## $currentVersion - ${new Date().format( 'yyyy-MM-dd' )}" }]
+    }
+}
+
+project.group = "info.solidsoft.gradle"
+//Beware: All release/version related changes should be put before that line which triggers (lazy) version evaluation
+project.version = scmVersion.version
+
+uploadArchives.dependsOn { check }
+
+String repoSlug = 'szpak/cdeliveryboy'
+modifyPom {
+    project {
+        name 'cdeliveryboy'
+        description 'CDeliveryBoy - Continuous Delivery for FOSS projects'
+        url "https://github.com/$repoSlug"
+        inceptionYear '2016'
+
+        scm {
+            url "https://github.com/$repoSlug"
+            connection "scm:https://github.com/$repoSlug"
+            developerConnection "scm:git://github.com/$repoSlug"
+        }
+
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+
+        developers {
+            developer {
+                id 'szpak'
+                name 'Marcin Zajączkowski'
+                email 'mszpak ATT wp DOTT pl'
+                roles {
+                    role 'developer'
+                    role 'despot'
+                }
+            }
+        }
+    }
+}
+
+if (hasProperty('pluginPortal')) {
+
+    apply plugin: 'com.gradle.plugin-publish'
+
+    pluginBundle {
+        website = 'https://github.com/szpak/CDeliveryBoy/'
+        vcsUrl = 'https://github.com/szpak/CDeliveryBoy/'
+
+        plugins {
+            plugin {
+                id = 'info.solidsoft.cdeliveryboy'
+                displayName = 'CDeliveryBoy'
+                description = 'Continuous Delivery for Gradle-based libraries and tools'
+                tags = ['cd', 'continuous-delivery', 'maven-central', 'nexus', 'release']
+            }
+        }
+
+        mavenCoordinates {
+            groupId = project.group
+            artifactId = project.name
+        }
+    }
+
+    publishPlugins {
+        onlyIf { ciBuild.isInReleaseMode }
+        mustRunAfter releaseRepository
+    }
+    ciBuild.dependsOn publishPlugins
+}
+
+if (hasProperty('changelogSync')) {
+
+    task syncChangelog(type: Exec) {
+        doFirst { logger.info("Synchronizing changelog with GitHub for version ${project.version}") }
+        commandLine 'chandler', 'push', "release/${project.version}", '--tag-prefix=release/'
+    }
+
+    syncChangelog {
+        onlyIf { ciBuild.isInReleaseMode }
+        mustRunAfter releaseRepository
+        if (project.tasks.findByName("publishPlugins")) {
+            mustRunAfter publishPlugins
+        }
+    }
+    ciBuild.dependsOn syncChangelog
+}
