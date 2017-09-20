@@ -21,6 +21,11 @@ check.shouldRunAfter funcTest
 check.dependsOn funcTestClasses     //or more generically: tasks.withType(AbstractCompile)
 uploadArchives.dependsOn funcTest, check
 
+task testReport(type: TestReport) {
+    destinationDir = file("$buildDir/reports/allTests")
+    reportOn test, funcTest
+}
+
 dependencies {
     funcTestCompile gradleTestKit()
     funcTestCompile 'com.github.stefanbirkner:system-rules:1.16.0'  //for overriding environment variables in functional tests
