@@ -9,7 +9,6 @@ buildscript {
         classpath 'info.solidsoft.gradle:cdeliveryboy:0.7.0'
         classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
         classpath 'com.toomuchcoding:uptodate-gradle-plugin:1.0.1'
-        classpath "gradle.plugin.com.palantir.ideatestfix:gradle-idea-test-fix:0.1.0"
     }
 }
 
@@ -17,7 +16,6 @@ apply plugin: 'groovy'
 apply plugin: 'java-gradle-plugin'
 apply from: "$rootDir/gradle/functional-test.gradle"
 apply plugin: 'com.toomuchcoding.uptodate'
-apply plugin: "com.palantir.idea-test-fix"
 apply plugin: 'info.solidsoft.cdeliveryboy'
 
 cDeliveryBoy {
