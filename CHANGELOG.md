@@ -5,6 +5,7 @@
  - Functional smoke tests
  - Upgrade to Gradle 4.1
  - Internal Gradle configuration refactoring
+ - Java 7 compatibility check with Animal Sniffer
 
 ## 0.7.1 - 2017-09-15
 

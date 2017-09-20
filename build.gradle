@@ -8,6 +8,7 @@ buildscript {
     dependencies {
         classpath 'info.solidsoft.gradle:cdeliveryboy:0.7.0'
         classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
+        classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.4.2'
         classpath 'com.toomuchcoding:uptodate-gradle-plugin:1.0.1'
     }
 }
@@ -15,6 +16,7 @@ buildscript {
 apply plugin: 'groovy'
 apply plugin: 'java-gradle-plugin'
 apply plugin: 'com.toomuchcoding.uptodate'
+apply plugin: 'ru.vyarus.animalsniffer'
 apply from: "$rootDir/gradle/functional-test.gradle"
 apply from: "$rootDir/gradle/cdeliveryboy-release.gradle"
 
@@ -40,4 +42,16 @@ dependencies {
     testCompile 'org.objenesis:objenesis:2.6'   //for mocking in Spock
     testCompile 'info.solidsoft.spock:spock-global-unroll:0.5.1'
     testCompile 'org.mockito:mockito-core:2.10.0'   //needed for one specific case in BasicProjectBuilderITSpec
+
+    signature 'org.codehaus.mojo.signature:java17:1.0@signature'
+}
+
+animalsniffer {
+    sourceSets = [project.sourceSets.main]  //just for production classes - Animal Sniffer fails with: 'Undefined reference: void for some Spock tests'
+                                            //https://github.com/mojohaus/animal-sniffer/issues/27
+}
+
+//Cannot be moved separate file in that form: https://github.com/gradle/gradle/issues/1262
+tasks.withType(ru.vyarus.gradle.plugin.animalsniffer.AnimalSniffer) {
+    onlyIf { project.hasProperty('java7CompatibilityCheck') }
 }
