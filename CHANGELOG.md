@@ -1,11 +1,16 @@
 # C(ontinuous)DeliveryBoy changelog
 
+## 0.8.1 - Unreleased
+
+ - Clarify inputs/outputs in tasks
+
 ## 0.8.0 - 2017-09-25
 
  - Functional smoke tests
  - Upgrade to Gradle 4.1
+ - Regression tests with different Grade versions - #12
  - Internal Gradle configuration refactoring
- - Java 7 compatibility check with Animal Sniffer
+ - Java 7 compatibility check with Animal Sniffer - #11
 
 ## 0.7.1 - 2017-09-15
 
