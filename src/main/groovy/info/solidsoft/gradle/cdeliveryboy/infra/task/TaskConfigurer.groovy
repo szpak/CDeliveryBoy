@@ -29,14 +29,15 @@ class TaskConfigurer {
     @CompileDynamic
     void configurePrepareCiBuildTask(CDeliveryBoyCiPrepareTask prepareTask) {
         prepareTask.conventionMapping.with {
-            ciType = { pluginConfig.ciType }
-            releaseBranch = { pluginConfig.git.releaseBranch }
+            //None at the moment
         }
     }
 
     @CompileDynamic
     void configureCiBuildTask(CDeliveryBoyCiBuildTask buildTask) {
-        //None at the moment
+        buildTask.conventionMapping.with {
+            //None at the moment
+        }
     }
 
     @CompileDynamic

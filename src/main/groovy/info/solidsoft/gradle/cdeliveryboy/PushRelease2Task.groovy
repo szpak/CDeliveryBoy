@@ -15,6 +15,11 @@ class PushRelease2Task extends Exec {
     @Input
     String releaseBranch
 
+    PushRelease2Task() {
+        //As the situation in underlying repo could change. Could it be done smarter?
+        this.outputs.upToDateWhen { false }
+    }
+
     @TaskAction
     @Override
     protected void exec() {
