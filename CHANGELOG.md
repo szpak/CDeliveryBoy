@@ -1,6 +1,6 @@
 # C(ontinuous)DeliveryBoy changelog
 
-## 0.8.0 - Unreleased
+## 0.8.0 - 2017-09-25
 
  - Functional smoke tests
  - Upgrade to Gradle 4.1
