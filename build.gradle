@@ -6,7 +6,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'info.solidsoft.gradle:cdeliveryboy:0.7.0'
+        classpath 'info.solidsoft.gradle:cdeliveryboy:0.7.1'
         classpath 'com.gradle.publish:plugin-publish-plugin:0.9.7'
         classpath 'ru.vyarus:gradle-animalsniffer-plugin:1.4.2'
         classpath 'com.toomuchcoding:uptodate-gradle-plugin:1.0.1'
