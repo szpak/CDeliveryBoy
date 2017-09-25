@@ -44,7 +44,7 @@ class PrepareForCiBuildTaskOrchestrator extends AbstractCiTaskOrchestrator {
                 prepareTask.dependsOn(getJustOneTaskByNameOrFail(taskConfig.createReleaseTask))
             }
         } else {
-            log.lifecycle("'${prepareTask.name}' task will not be executed") //TODO: Switch to info
+            log.info("'${prepareTask.name}' task will not be executed")
         }
     }
 }

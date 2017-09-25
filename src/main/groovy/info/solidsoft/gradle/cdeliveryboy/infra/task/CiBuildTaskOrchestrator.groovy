@@ -56,7 +56,7 @@ class CiBuildTaskOrchestrator extends AbstractCiTaskOrchestrator {
                 }
             }
         } else {
-            log.lifecycle("'${ciBuildTask.name}' task will not be executed.")  //TODO: Switch to info
+            log.info("'${ciBuildTask.name}' task will not be executed.")
         }
 
     }
